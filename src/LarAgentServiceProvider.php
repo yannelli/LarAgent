@@ -2,9 +2,9 @@
 
 namespace Maestroerror\LarAgent;
 
+use Maestroerror\LarAgent\Commands\LarAgentCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Maestroerror\LarAgent\Commands\LarAgentCommand;
 
 class LarAgentServiceProvider extends PackageServiceProvider
 {
