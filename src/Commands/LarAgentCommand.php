@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Maestroerror\LarAgent\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LarAgentCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laragent';
 
     public $description = 'My command';
 
