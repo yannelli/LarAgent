@@ -19,9 +19,12 @@
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.3",
+        "guzzlehttp/guzzle": "^7.9",
+        "illuminate/contracts": "^10.0||^11.0",
+        "openai-php/client": "^0.10.3",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^10.0||^11.0"
+        "theodo-group/llphant": "^0.8.13"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -58,7 +61,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "php-http/discovery": true
         }
     },
     "extra": {
