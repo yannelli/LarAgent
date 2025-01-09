@@ -7,11 +7,17 @@ use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
 abstract class Tool implements ToolInterface
 {
     protected string $name;
+
     protected string $description;
+
     protected array $properties = [];
+
     protected array $required = [];
+
     protected array $metaData = [];
+
     protected array $args = [];
+
     protected string $toolCallId;
 
     public function __construct(string $name, string $description, $metaData = [])
@@ -31,7 +37,7 @@ abstract class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(string $name, string|array $type, string $description = "", array $enum = []): self
+    public function addProperty(string $name, string|array $type, string $description = '', array $enum = []): self
     {
         $property = [
             'type' => $type,
@@ -49,11 +55,12 @@ abstract class Tool implements ToolInterface
 
     public function setRequired(string $name): self
     {
-        if (!array_key_exists($name, $this->properties)) {
+        if (! array_key_exists($name, $this->properties)) {
             throw new \InvalidArgumentException("Property '{$name}' does not exist.");
         }
 
         $this->required[] = $name;
+
         return $this;
     }
 
@@ -65,6 +72,7 @@ abstract class Tool implements ToolInterface
     public function setMetaData(array $metaData): self
     {
         $this->metaData = $metaData;
+
         return $this;
     }
 
@@ -76,6 +84,7 @@ abstract class Tool implements ToolInterface
     public function setArguments(array $args): self
     {
         $this->args = $args;
+
         return $this;
     }
 
@@ -87,6 +96,7 @@ abstract class Tool implements ToolInterface
     public function setCallId(string $id): self
     {
         $this->toolCallId = $id;
+
         return $this;
     }
 

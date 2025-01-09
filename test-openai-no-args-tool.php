@@ -1,16 +1,14 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 use Maestroerror\LarAgent\Drivers\OpenAiDriver;
-use Maestroerror\LarAgent\Tool;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
+use Maestroerror\LarAgent\Tool;
 
-$yourApiKey = include('openai-api-key.php');
+$yourApiKey = include 'openai-api-key.php';
 $driver = new OpenAiDriver($yourApiKey);
 
 // Tool calling example
@@ -23,16 +21,15 @@ $messageObjects = [
     $userMessage,
 ];
 
-
 // Create tool
 $toolName = 'get_current_weather';
 $tool = new Tool($toolName, 'Get the current weather in a user location');
-$location = "Boston";
+$location = 'Boston';
 $unit = 'Farenheit';
 $tool->setCallback(function () use ($location, $unit) {
-        // "Call the weather API"
-        return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
-    });
+    // "Call the weather API"
+    return 'The weather in '.$location.' is 72 degrees '.$unit;
+});
 
 // Register tool
 $driver->registerTool($tool);
@@ -59,9 +56,8 @@ $messageObjects[] = $response;
 
 echo $response;
 
-
-function get_current_weather($location, $unit = 'celsius') {
+function get_current_weather($location, $unit = 'celsius')
+{
     // Call the weather API
-    return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
+    return 'The weather in '.$location.' is 72 degrees '.$unit;
 }
-

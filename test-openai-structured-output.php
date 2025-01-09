@@ -1,42 +1,40 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 use Maestroerror\LarAgent\Drivers\OpenAiDriver;
-use Maestroerror\LarAgent\Tool;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
+use Maestroerror\LarAgent\History\InMemoryChatHistory;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
-use Maestroerror\LarAgent\History\InMemoryChatHistory;
+use Maestroerror\LarAgent\Tool;
 
-$yourApiKey = include('openai-api-key.php');
+$yourApiKey = include 'openai-api-key.php';
 $driver = new OpenAiDriver($yourApiKey);
 $chatHistory = new InMemoryChatHistory('test-chat-history');
 
 $weatherInfoSchema = [
-    "name" => "weather_info",
-    "schema" => [
-        "type" => "object",
-        "properties" => [
-            "locations" => [
-                "type" => "array",
-                "items" => [
-                    "type" => "object",
-                    "properties" => [
-                        "city" => [ "type" => "string" ],
-                        "weather" => [ "type" => "string" ]
+    'name' => 'weather_info',
+    'schema' => [
+        'type' => 'object',
+        'properties' => [
+            'locations' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'city' => ['type' => 'string'],
+                        'weather' => ['type' => 'string'],
                     ],
-                    "required" => ["city", "weather"],
-                    "additionalProperties" => false
-                ]
+                    'required' => ['city', 'weather'],
+                    'additionalProperties' => false,
+                ],
             ],
         ],
-        "required" => ["locations"],
-        "additionalProperties" => false
+        'required' => ['locations'],
+        'additionalProperties' => false,
     ],
-    "strict" => true
+    'strict' => true,
 ];
 
 $driver->setResponseSchema($weatherInfoSchema);
@@ -45,18 +43,17 @@ $driver->setResponseSchema($weatherInfoSchema);
 $userMessage = new UserMessage('What\'s the weather like in Boston? I prefer celsius');
 $chatHistory->addMessage($userMessage);
 
-
 // Create tool
 $toolName = 'get_current_weather';
 $tool = new Tool($toolName, 'Get the current weather in a given location');
 $tool->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
     ->addProperty('unit', 'string', 'The unit of temperature', ['celsius', 'fahrenheit'])
     ->setRequired('location')
-    ->setMetaData(["sent_at" => "2024-01-01"]) // @todo where to use tool's meta data?
+    ->setMetaData(['sent_at' => '2024-01-01']) // @todo where to use tool's meta data?
     // ->setCallback('get_current_weather')
     ->setCallback(function ($location, $unit = 'celsius') {
         // "Call the weather API"
-        return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
+        return 'The weather in '.$location.' is 72 degrees '.$unit;
     });
 
 // Register tool
@@ -88,9 +85,10 @@ if ($driver->structuredOutputEnabled()) {
     echo $response;
 }
 
-function get_current_weather($location, $unit = 'celsius') {
+function get_current_weather($location, $unit = 'celsius')
+{
     // Call the weather API
-    return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
+    return 'The weather in '.$location.' is 72 degrees '.$unit;
 }
 
 $chatHistory->writeToMemory();

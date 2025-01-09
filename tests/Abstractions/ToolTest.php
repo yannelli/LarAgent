@@ -1,10 +1,11 @@
 <?php
 
-use Maestroerror\LarAgent\Tool;
 use Maestroerror\LarAgent\Tests\Fakes\FakeWeatherService;
+use Maestroerror\LarAgent\Tool;
 
 // Test function
-function getWeather($location) {
+function getWeather($location)
+{
     return "Weather for {$location}";
 }
 
@@ -40,7 +41,7 @@ it('can set required properties', function () {
 
 it('throws an exception if setting required property that does not exist', function () {
     $tool = Tool::create('get_current_weather', 'Get the current weather in a given location');
-    
+
     $tool->setRequired('invalid_property');
 })->throws(InvalidArgumentException::class, "Property 'invalid_property' does not exist");
 
@@ -111,11 +112,10 @@ it('handles tools with no properties gracefully', function () {
     expect($tool->getProperties())->toBe([]);
 });
 
-
 // Callbacks
 
 it('executes an object method callback', function () {
-    $weatherService = new FakeWeatherService();
+    $weatherService = new FakeWeatherService;
 
     $tool = Tool::create('get_current_weather', 'Get the current weather in a given location')
         ->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
@@ -148,7 +148,6 @@ it('executes a named function callback', function () {
 
     expect($result)->toBe('Weather for New York, NY');
 });
-
 
 it('throws a TypeError if the callback is not callable', function () {
     $tool = Tool::create('get_current_weather', 'Get the current weather in a given location')

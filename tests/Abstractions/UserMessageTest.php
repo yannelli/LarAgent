@@ -1,8 +1,8 @@
 <?php
 
-use Maestroerror\LarAgent\Messages\UserMessage;
-use Maestroerror\LarAgent\Message;
 use Maestroerror\LarAgent\Core\Enums\Role;
+use Maestroerror\LarAgent\Message;
+use Maestroerror\LarAgent\Messages\UserMessage;
 
 it('creates a user message with content and metadata', function () {
     $message = new UserMessage('What is the weather in Boston?', ['key' => 'value']);
@@ -54,8 +54,8 @@ it('uses the first text element if content is an array', function () {
             ['text' => 'What is the weather in Boston?'],
             [
                 'image_url' => [
-                    "url" => "https://example.com/image.jpg",
-                ]
+                    'url' => 'https://example.com/image.jpg',
+                ],
             ],
         ]
     );

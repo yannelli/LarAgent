@@ -8,11 +8,11 @@ class Agent
 {
     public static function forUser(Authenticatable $user): static
     {
-        $instance = new static();
+        $instance = new static;
         $userId = $user->getAuthIdentifier();
 
         $instance->chatSessionId = sprintf(
-            "%s_%s_%s",
+            '%s_%s_%s',
             class_basename(static::class),
             $instance->model,
             $userId

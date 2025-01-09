@@ -1,13 +1,13 @@
 <?php
 
-use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
+use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
 
 it('returns an assistant message', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
 
-    $driver->addMockResponse("stop", [
+    $driver->addMockResponse('stop', [
         'content' => 'This is a simulated assistant response',
         'metaData' => ['usage' => ['tokens' => 10]],
     ]);
@@ -19,11 +19,10 @@ it('returns an assistant message', function () {
         ->and($message->getContent())->toBe('This is a simulated assistant response');
 });
 
-
 it('returns a tool call message', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
 
-    $driver->addMockResponse("tool_calls", [
+    $driver->addMockResponse('tool_calls', [
         'toolName' => 'get_current_weather',
         'arguments' => '{"location": "San Francisco, CA"}',
         'metaData' => ['usage' => ['tokens' => 15]],

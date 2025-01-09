@@ -2,15 +2,18 @@
 
 namespace Maestroerror\LarAgent\Core\Abstractions;
 
+use ArrayAccess;
 use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use ArrayAccess;
 
-abstract class ChatHistory implements ChatHistoryInterface, ArrayAccess
+abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 {
     protected array $messages = []; // Store messages as an array of MessageInterface
+
     protected int $contextWindow;   // Maximum allowed tokens in the context
+
     protected int $reservedForCompletion = 1000; // Reserved tokens for completion
+
     protected string $name; // History identifier
 
     public function __construct(string $name, int $contextWindow = 60000)
@@ -52,7 +55,7 @@ abstract class ChatHistory implements ChatHistoryInterface, ArrayAccess
 
     public function toArray(): array
     {
-        return array_map(fn(MessageInterface $message) => $message->toArray(), $this->messages);
+        return array_map(fn (MessageInterface $message) => $message->toArray(), $this->messages);
     }
 
     // ArrayAccess implementation
@@ -68,7 +71,7 @@ abstract class ChatHistory implements ChatHistoryInterface, ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        if (!$value instanceof MessageInterface) {
+        if (! $value instanceof MessageInterface) {
             throw new \InvalidArgumentException('Only instances of MessageInterface can be added to ChatHistory.');
         }
 
@@ -101,7 +104,8 @@ abstract class ChatHistory implements ChatHistoryInterface, ArrayAccess
         return $tokens > ($this->contextWindow - $this->reservedForCompletion);
     }
 
-    public function truncateOldMessages(int $messagesCount): void {
+    public function truncateOldMessages(int $messagesCount): void
+    {
         array_splice($this->messages, 0, $messagesCount);
     }
 }
