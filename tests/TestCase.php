@@ -3,8 +3,8 @@
 namespace Maestroerror\LarAgent\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Maestroerror\LarAgent\LarAgentServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
