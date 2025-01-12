@@ -9,9 +9,14 @@ This is where your description should go. Limit it to a paragraph or two. Consid
 
 ## To Do
 
--   Fck The LLPhant, start with only OpenAI https://github.com/openai-php/client (& Anthropic https://github.com/mozex/anthropic-php ???), pincone, redis, file and in memory vector stores
--   Decisions: https://chatgpt.com/c/67621643-c474-8006-8fec-5a2df2844fd4
--   Main concerns: https://chatgpt.com/c/67620ef2-6ef0-8006-b752-5d7a7036d83b
+-   Json history (not dependent on Laravel)
+-   Agent class for extension and apply configs
+-   Encrypt chat history (optional)
+-   Feature test for outer api classes like LarAgent and Agent
+-   Agent creation command with stabs
+-   Driver creation command with stabs
+-   Check github actions, Update workflows and templates
+-   Basic documentation + Roadmap
 
 ## Goal
 
@@ -102,8 +107,10 @@ class WeatherAgent extends Agent {
 **Usage goal:**
 
 ```php
-WeatherAgent::for("test_chat")->respond("What is a weather in Tbilisi today?");
-WeatherAgent::forUser($user)->respond("What is a weather in Tbilisi today?");
+WeatherAgent::forUser($user)->message("What is a weather in Tbilisi today?")->get();
+WeatherAgent::for("test_chat")->message("What is a weather in Tbilisi today?")->get();
+// Shortened version
+WeatherAgent::respond("test_chat", "What is a weather in Tbilisi today?");
 ```
 
 ## Support us

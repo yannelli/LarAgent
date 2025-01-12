@@ -30,6 +30,11 @@ abstract class Message implements MessageInterface, ArrayAccess
         return $this->content;
     }
 
+    public function setContent(string|array $message): void
+    {
+        $this->content = $message;
+    }
+
     public function getMetadata(): array
     {
         return $this->metadata;
