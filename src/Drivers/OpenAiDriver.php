@@ -55,7 +55,7 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
         ];
 
         // @todo Enable parallel tool calls
-        if ($finishReason === "tool_calls") {
+        if ($finishReason === 'tool_calls') {
             $toolName = $this->lastResponse->choices[0]->message->toolCalls[0]->function->name;
             $args = $this->lastResponse->choices[0]->message->toolCalls[0]->function->arguments;
             $callId = $this->lastResponse->choices[0]->message->toolCalls[0]->id;

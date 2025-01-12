@@ -5,126 +5,158 @@ namespace Maestroerror\LarAgent;
 use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
-use Maestroerror\LarAgent\Message;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Core\Traits\Hooks;
+use Maestroerror\LarAgent\Messages\ToolCallMessage;
 
-class LarAgent {
-
+class LarAgent
+{
     use Hooks;
 
-    protected string $model = "gpt-4o-mini";
+    protected string $model = 'gpt-4o-mini';
+
     protected int $contextWindowSize = 50000;
+
     protected int $maxCompletionTokens = 1000;
+
     protected int $temperature = 1;
+
     protected int $reinjectInstructionsPer = 0; // 0 Means never
 
     protected string $instructions;
+
     protected MessageInterface $message;
+
     protected array $responseSchema;
 
     protected LlmDriverInterface $driver;
-    protected ChatHistoryInterface $chatHistory;
-    protected array $tools = [];
 
+    protected ChatHistoryInterface $chatHistory;
+
+    protected array $tools = [];
 
     // Config methods
 
-    public function getModel(): string {
+    public function getModel(): string
+    {
         return $this->model;
     }
 
-    public function setModel(string $model): self {
+    public function setModel(string $model): self
+    {
         $this->model = $model;
+
         return $this;
     }
 
-    public function useModel(string $model): self {
+    public function useModel(string $model): self
+    {
         $this->model = $model;
+
         return $this;
     }
 
-    public function getContextWindowSize(): int {
+    public function getContextWindowSize(): int
+    {
         return $this->contextWindowSize;
     }
 
-    public function setContextWindowSize(int $contextWindowSize): self {
+    public function setContextWindowSize(int $contextWindowSize): self
+    {
         $this->contextWindowSize = $contextWindowSize;
+
         return $this;
     }
 
-    public function getMaxCompletionTokens(): int {
+    public function getMaxCompletionTokens(): int
+    {
         return $this->maxCompletionTokens;
     }
 
-    public function setMaxCompletionTokens(int $maxCompletionTokens): self {
+    public function setMaxCompletionTokens(int $maxCompletionTokens): self
+    {
         $this->maxCompletionTokens = $maxCompletionTokens;
+
         return $this;
     }
 
-    public function getTemperature(): float {
+    public function getTemperature(): float
+    {
         return $this->temperature;
     }
 
-    public function setTemperature(float $temperature): self {
+    public function setTemperature(float $temperature): self
+    {
         $this->temperature = $temperature;
+
         return $this;
     }
 
-    public function getReinjectInstuctionsPer(): int {
+    public function getReinjectInstuctionsPer(): int
+    {
         return $this->reinjectInstructionsPer;
     }
 
-    public function setReinjectInstuctionsPer(int $reinjectInstructionsPer): self {
+    public function setReinjectInstuctionsPer(int $reinjectInstructionsPer): self
+    {
         $this->reinjectInstructionsPer = $reinjectInstructionsPer;
+
         return $this;
     }
 
-    public function getInstructions(): ?string {
+    public function getInstructions(): ?string
+    {
         return $this->instructions ?? null;
     }
 
-    public function withInstructions(string $instructions): self {
+    public function withInstructions(string $instructions): self
+    {
         $this->instructions = $instructions;
+
         return $this;
     }
 
-    public function getCurrentMessage(): ?MessageInterface {
+    public function getCurrentMessage(): ?MessageInterface
+    {
         return $this->message ?? null;
     }
 
-    public function withMessage(MessageInterface $message): self {
+    public function withMessage(MessageInterface $message): self
+    {
         $this->message = $message;
+
         return $this;
     }
 
-    public function getResponseSchema(): ?array {
+    public function getResponseSchema(): ?array
+    {
         return $this->responseSchema ?? null;
     }
 
-    public function structured(array $responseSchema): self {
+    public function structured(array $responseSchema): self
+    {
         $this->responseSchema = $responseSchema;
+
         return $this;
     }
 
-    
-
-
     // Main API methods
 
-    public function __construct(LlmDriverInterface $driver, ChatHistoryInterface $chatHistory) {
+    public function __construct(LlmDriverInterface $driver, ChatHistoryInterface $chatHistory)
+    {
         $this->driver = $driver;
         $this->chatHistory = $chatHistory;
     }
 
-    public static function setup(LlmDriverInterface $driver, ChatHistoryInterface $chatHistory, array $configs = []): self {
+    public static function setup(LlmDriverInterface $driver, ChatHistoryInterface $chatHistory, array $configs = []): self
+    {
         $agent = new self($driver, $chatHistory);
         $agent->setConfigs($configs);
+
         return $agent;
     }
 
-    public function setConfigs(array $configs): void {
+    public function setConfigs(array $configs): void
+    {
         $this->contextWindowSize = $configs['contextWindowSize'] ?? $this->contextWindowSize;
         $this->maxCompletionTokens = $configs['maxCompletionTokens'] ?? $this->maxCompletionTokens;
         $this->temperature = $configs['temperature'] ?? $this->temperature;
@@ -132,18 +164,23 @@ class LarAgent {
         $this->model = $configs['model'] ?? $this->model;
     }
 
-    public function setTools(array $tools): self {
+    public function setTools(array $tools): self
+    {
         $this->tools = $tools;
+
         return $this;
     }
 
-    public function registerTool(array $tools): self {
+    public function registerTool(array $tools): self
+    {
         $this->tools[] = $tools;
+
         return $this;
     }
 
     // Execution method
-    public function run(): MessageInterface|array|null {
+    public function run(): MessageInterface|array|null
+    {
 
         // Manage instructions
         $totalMessages = $this->chatHistory->count();
@@ -162,7 +199,7 @@ class LarAgent {
         }
 
         // Register tools
-        if (!empty($this->tools)) {
+        if (! empty($this->tools)) {
             foreach ($this->tools as $tool) {
                 $this->driver->registerTool($tool);
             }
@@ -172,7 +209,7 @@ class LarAgent {
         if ($this->getResponseSchema()) {
             $this->driver->setResponseSchema($this->responseSchema);
         }
-        
+
         // Before send (Before adding message in chat history)
         if ($this->processBeforeSend($this->chatHistory, $this->message) === false) {
             return null;
@@ -187,7 +224,7 @@ class LarAgent {
         }
 
         // if response execution is interrupted by a callback
-        if (!$response) {
+        if (! $response) {
             return null;
         }
 
@@ -195,6 +232,7 @@ class LarAgent {
         if ($response instanceof ToolCallMessage) {
             // Process tool
             $result = $this->processTool($response);
+
             // $response = $this->send(Message::toolResult($tool, $result));
             return $this->withMessage(Message::toolResult($tool, $result))->run();
         }
@@ -210,6 +248,7 @@ class LarAgent {
             if ($this->processBeforeStructuredOutput($array) === false) {
                 return null;
             }
+
             return $array;
         } else {
             return $response;
@@ -218,7 +257,8 @@ class LarAgent {
 
     // Helper methods
 
-    protected function send(MessageInterface $message): ?MessageInterface {
+    protected function send(MessageInterface $message): ?MessageInterface
+    {
         $this->chatHistory->addMessage($message);
         // Before response (Before sending message to LLM)
         // If any callback will return false, it will stop the process silently
@@ -230,10 +270,12 @@ class LarAgent {
         // After response (After receiving message from LLM)
         $this->processAfterResponse($response);
         $this->chatHistory->addMessage($response);
+
         return $response;
     }
 
-    protected function buildConfig(): array {
+    protected function buildConfig(): array
+    {
         return [
             'model' => $this->getModel(),
             'max_completion_tokens' => $this->getMaxCompletionTokens(),
@@ -241,15 +283,17 @@ class LarAgent {
             // @todo Enable parallel function handling and make this config optional
             'parallel_tool_calls' => false,
             // @todo make tool choice controllable (required & specific tool)
-            'tool_choice' => "auto",
+            'tool_choice' => 'auto',
         ];
     }
 
-    protected function injectInstructions(): void {
+    protected function injectInstructions(): void
+    {
         $this->chatHistory->addMessage(Message::system($this->getInstructions()));
     }
 
-    protected function processTool(ToolCallMessage $message): mixed {
+    protected function processTool(ToolCallMessage $message): mixed
+    {
         $tool = $this->driver->getTool($message->getToolName())
             ->setCallId($message->getCallId())
             ->setArguments(json_decode($message->getToolArguments(), true));
@@ -258,7 +302,7 @@ class LarAgent {
         $result = $tool->execute();
         // After tool execution
         $this->processAfterToolExecution($tool, $result);
+
         return $result;
     }
-    
 }

@@ -6,24 +6,32 @@ use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
 
-trait Hooks {
-
+trait Hooks
+{
     // Before reinjecting instuctions
     protected array $beforeReinjectCallbacks = [];
+
     // Before send (Before adding message in chat history)
     protected array $beforeSendCallbacks = [];
+
     // After send (After adding LLM response to Chat history)
     protected array $afterSendCallbacks = [];
+
     // Before saving chat history
     protected array $beforeSaveCallbacks = [];
+
     // Before response (Before sending message to LLM)
     protected array $beforeResponseCallbacks = [];
+
     // After response (After receiving message from LLM)
     protected array $afterResponseCallbacks = [];
+
     // Before tool execution
     protected array $beforeToolExecutionCallbacks = [];
+
     // After tool execution
     protected array $afterToolExecutionCallbacks = [];
+
     // Before structured output response
     protected array $beforeStructuredOutputCallbacks = [];
 
@@ -33,16 +41,19 @@ trait Hooks {
     public function beforeReinjectingInstructions(callable $callback): self
     {
         $this->beforeReinjectCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeReinjectingInstructions(): ?bool {
+    protected function processBeforeReinjectingInstructions(): ?bool
+    {
         foreach ($this->beforeReinjectCallbacks as $callback) {
             // ($agent)
             if ($callback($this) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -50,16 +61,19 @@ trait Hooks {
     public function beforeSend(callable $callback): self
     {
         $this->beforeSendCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeSend(ChatHistoryInterface $history, MessageInterface $message): ?bool {
+    protected function processBeforeSend(ChatHistoryInterface $history, MessageInterface $message): ?bool
+    {
         foreach ($this->beforeSendCallbacks as $callback) {
             // ($agent, $message)
             if ($callback($this, $history, $message) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -67,16 +81,19 @@ trait Hooks {
     public function afterSend(callable $callback): self
     {
         $this->afterSendCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processAfterSend(ChatHistoryInterface $history, MessageInterface $message): ?bool {
+    protected function processAfterSend(ChatHistoryInterface $history, MessageInterface $message): ?bool
+    {
         foreach ($this->afterSendCallbacks as $callback) {
             // ($agent, $history, $message)
             if ($callback($this, $history, $message) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -84,16 +101,19 @@ trait Hooks {
     public function beforeSaveHistory(callable $callback): self
     {
         $this->beforeSaveCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeSaveHistory(ChatHistoryInterface $history): ?bool {
+    protected function processBeforeSaveHistory(ChatHistoryInterface $history): ?bool
+    {
         foreach ($this->beforeSaveCallbacks as $callback) {
             // ($agent, $history)
             if ($callback($this, $history) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -101,16 +121,19 @@ trait Hooks {
     public function beforeResponse(callable $callback): self
     {
         $this->beforeResponseCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeResponse(ChatHistoryInterface $history, MessageInterface $message): ?bool {
+    protected function processBeforeResponse(ChatHistoryInterface $history, MessageInterface $message): ?bool
+    {
         foreach ($this->afterResponseCallbacks as $callback) {
             // ($agent, $message)
             if ($callback($this, $history, $message) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -118,16 +141,19 @@ trait Hooks {
     public function afterResponse(callable $callback): self
     {
         $this->afterResponseCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processAfterResponse(MessageInterface $message): ?bool {
+    protected function processAfterResponse(MessageInterface $message): ?bool
+    {
         foreach ($this->afterResponseCallbacks as $callback) {
             // ($agent, $message)
             if ($callback($this, $message) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -135,16 +161,19 @@ trait Hooks {
     public function beforeToolExecution(callable $callback): self
     {
         $this->beforeToolExecutionCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeToolExecution(ToolInterface $tool): ?bool {
+    protected function processBeforeToolExecution(ToolInterface $tool): ?bool
+    {
         foreach ($this->beforeToolExecutionCallbacks as $callback) {
             // ($agent, $tool)
             if ($callback($this, $tool) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
@@ -152,32 +181,38 @@ trait Hooks {
     public function afterToolExecution(callable $callback): self
     {
         $this->afterToolExecutionCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processAfterToolExecution(ToolInterface $tool, mixed &$result): ?bool {
+    protected function processAfterToolExecution(ToolInterface $tool, mixed &$result): ?bool
+    {
         foreach ($this->afterToolExecutionCallbacks as $callback) {
             // ($agent, $tool, &$result) to make $result mutable
             if ($callback($this, $tool, $result) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 
     public function beforeStructuredOutput(callable $callback): self
     {
         $this->beforeStructuredOutputCallbacks[] = $callback;
+
         return $this;
     }
 
-    protected function processBeforeStructuredOutput(array &$response): ?bool {
+    protected function processBeforeStructuredOutput(array &$response): ?bool
+    {
         foreach ($this->beforeStructuredOutputCallbacks as $callback) {
             // ($agent, &$response)
             if ($callback($this, $response) === false) {
                 return false; // Return false if a callback returns false
             }
         }
+
         return true;
     }
 }
