@@ -2,14 +2,16 @@
 
 namespace Maestroerror\LarAgent\Core\Abstractions;
 
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use ArrayAccess;
+use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Core\Enums\Role;
 
-abstract class Message implements MessageInterface, ArrayAccess
+abstract class Message implements ArrayAccess, MessageInterface
 {
     protected string $role;  // Represents the sender or role (e.g., "user", "agent")
+
     protected string|array $content;  // The actual message content
+
     protected array $metadata;  // Additional data about the message
 
     public function __construct(string $role, string|array $content, array $metadata = [])

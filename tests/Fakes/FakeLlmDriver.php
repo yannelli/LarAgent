@@ -24,7 +24,7 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
         $this->setConfig($options);
 
         if (empty($this->mockResponses)) {
-            throw new \Exception("No mock responses are defined.");
+            throw new \Exception('No mock responses are defined.');
         }
 
         $mockResponse = array_shift($this->mockResponses);
@@ -33,7 +33,7 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
         $responseData = $mockResponse['responseData'];
 
         // Handle different finish reasons
-        if ($finishReason === "tool_calls") {
+        if ($finishReason === 'tool_calls') {
             return new ToolCallMessage(
                 $responseData['callId'] ?? uniqid('tool_call_'),
                 $responseData['toolName'],
@@ -42,13 +42,13 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
             );
         }
 
-        if ($finishReason === "stop") {
+        if ($finishReason === 'stop') {
             return new AssistantMessage(
                 $responseData['content'],
                 $responseData['metaData'] ?? []
             );
         }
 
-        throw new \Exception("Unexpected finish reason: " . $finishReason);
+        throw new \Exception('Unexpected finish reason: '.$finishReason);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 use Maestroerror\LarAgent\History\InMemoryChatHistory;
 use Maestroerror\LarAgent\Messages\UserMessage;
 
@@ -40,7 +41,6 @@ it('supports array access for messages', function () {
     expect(isset($chatHistory[0]))->toBeFalse();
 });
 
-
 it('can write and read messages to and from memory', function () {
     $chatHistory = new InMemoryChatHistory('test_memory_history');
     $message = new UserMessage('Remember this message in memory');
@@ -75,7 +75,7 @@ it('can truncate old messages when exceeding context window', function () {
     $chatHistory->addMessage(new UserMessage('Message 2'));
     $chatHistory->addMessage(new UserMessage('Message 3'));
     $chatHistory->addMessage(new UserMessage('Message 4'));
-    
+
     if ($chatHistory->exceedsContextWindow(5300)) {
         $chatHistory->truncateOldMessages(3);
     }

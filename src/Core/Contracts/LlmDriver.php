@@ -2,18 +2,18 @@
 
 namespace Maestroerror\LarAgent\Core\Contracts;
 
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
+use Maestroerror\LarAgent\Messages\AssistantMessage;
+use Maestroerror\LarAgent\Messages\ToolCallMessage;
 
 interface LlmDriver
 {
     /**
      * Send a message or prompt to the LLM and receive a response.
      *
-     * @param array $messages Array of messages in the format:
-     *                        ['role' => 'user|system|assistant', 'content' => '...']
-     * @param array $options Additional options like temperature, max_tokens, etc.
+     * @param  array  $messages  Array of messages in the format:
+     *                           ['role' => 'user|system|assistant', 'content' => '...']
+     * @param  array  $options  Additional options like temperature, max_tokens, etc.
      * @return ToolCallMessage|AssistantMessage The response from the LLM in a structured format.
      */
     public function sendMessage(array $messages, array $options = []): ToolCallMessage|AssistantMessage;
@@ -21,9 +21,8 @@ interface LlmDriver
     /**
      * Register a tool for the LLM to use.
      *
-     * @param string $name The tool's unique name.
-     * @param ToolInterface $tool The tool instance.
-     * @return self
+     * @param  string  $name  The tool's unique name.
+     * @param  ToolInterface  $tool  The tool instance.
      */
     public function registerTool(ToolInterface $tool): self;
 
@@ -44,8 +43,7 @@ interface LlmDriver
     /**
      * Set a schema for structured output.
      *
-     * @param array $schema JSON Schema defining the expected output structure.
-     * @return self
+     * @param  array  $schema  JSON Schema defining the expected output structure.
      */
     public function setResponseSchema(array $schema): self;
 
@@ -59,8 +57,7 @@ interface LlmDriver
     /**
      * Set configuration parameters for the LLM.
      *
-     * @param array $config Configuration options (e.g., temperature, model).
-     * @return self
+     * @param  array  $config  Configuration options (e.g., temperature, model).
      */
     public function setConfig(array $config): self;
 

@@ -3,14 +3,14 @@
 namespace Maestroerror\LarAgent;
 
 use Maestroerror\LarAgent\Core\Abstractions\Message as AbstractMessage;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\UserMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\SystemMessage;
 
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
+use Maestroerror\LarAgent\Messages\AssistantMessage;
+use Maestroerror\LarAgent\Messages\ToolCallMessage;
+use Maestroerror\LarAgent\Messages\ToolResultMessage;
+use Maestroerror\LarAgent\Messages\UserMessage;
 
 // Accessor, Simplified API for messages
 class Message extends AbstractMessage
@@ -21,7 +21,7 @@ class Message extends AbstractMessage
         if (empty($role)) {
             throw new \InvalidArgumentException('Role cannot be empty.');
         }
-        
+
         return new self($role, $content, $metadata);
     }
 

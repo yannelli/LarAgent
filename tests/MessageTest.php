@@ -2,9 +2,9 @@
 
 use Maestroerror\LarAgent\Message;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\UserMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
+use Maestroerror\LarAgent\Messages\UserMessage;
 use Maestroerror\LarAgent\Tool;
 
 it('creates a custom message', function () {
@@ -23,7 +23,6 @@ it('creates an assistant message', function () {
         ->and($message->getContent())->toBe('This is an assistant message')
         ->and($message->getMetadata())->toHaveKey('usage', 'test');
 });
-
 
 it('creates a user message', function () {
     $message = Message::user('This is a user message', ['timestamp' => '2025-01-01']);
@@ -49,9 +48,9 @@ it('creates a tool call message', function () {
 it('creates a tool result message', function () {
     $tool = Tool::create('get_weather', 'Get the weather in a location')
         ->setCallback(function ($location, $unit = 'celsius') {
-            return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
+            return 'The weather in '.$location.' is 72 degrees '.$unit;
         })
-        ->setCallId("12345");
+        ->setCallId('12345');
 
     $result = '{"temperature": "20°C"}';
     $message = Message::toolResult($tool, $result, ['status' => 'completed']);
@@ -77,7 +76,6 @@ it('throws an exception for invalid JSON in tool call message', function () {
 
     Message::toolCall($toolCallId, $toolName, $invalidJsonArgs);
 })->throws(\JsonException::class);
-
 
 it('handles empty content for user message', function () {
     $message = Message::user('', []);

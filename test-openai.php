@@ -1,10 +1,8 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
-use OpenAI\Client;
-
-$yourApiKey = include('openai-api-key.php');
+$yourApiKey = include 'openai-api-key.php';
 $client = OpenAI::client($yourApiKey);
 
 // Structured output
@@ -47,7 +45,6 @@ $client = OpenAI::client($yourApiKey);
 
 // var_dump(json_decode($result->choices[0]->message->content));
 
-
 // Tool calling example
 $messages = [
     ['role' => 'user', 'content' => 'What\'s the weather like in Boston? I prefer celsius'],
@@ -71,17 +68,15 @@ $response = $client->chat()->create([
                         ],
                         'unit' => [
                             'type' => 'string',
-                            'enum' => ['celsius', 'fahrenheit']
+                            'enum' => ['celsius', 'fahrenheit'],
                         ],
                     ],
                     'required' => ['location'],
                 ],
             ],
-        ]
-    ]
+        ],
+    ],
 ]);
-
-
 
 foreach ($response->choices as $result) {
     $args = json_decode($result->message->toolCalls[0]->function->arguments, true);
@@ -100,20 +95,18 @@ $messages[] = [
                 'name' => 'get_current_weather',
                 'arguments' => '{"location":"Boston, MA"}',
             ],
-        ]
+        ],
     ],
 ];
 
 $messages[] = [
-    'role' => 'tool', 
+    'role' => 'tool',
     'content' => json_encode([
         ...$args,
-        'weather' => $funcResult
+        'weather' => $funcResult,
     ]),
-    "tool_call_id" => $response->choices[0]->message->toolCalls[0]->id
+    'tool_call_id' => $response->choices[0]->message->toolCalls[0]->id,
 ];
-
-
 
 $response = $client->chat()->create([
     'model' => 'gpt-4o-mini',
@@ -133,20 +126,20 @@ $response = $client->chat()->create([
                         ],
                         'unit' => [
                             'type' => 'string',
-                            'enum' => ['celsius', 'fahrenheit']
+                            'enum' => ['celsius', 'fahrenheit'],
                         ],
                     ],
                     'required' => ['location'],
                 ],
             ],
-        ]
-    ]
+        ],
+    ],
 ]);
 
-
-function get_current_weather($location, $unit = 'celsius') {
+function get_current_weather($location, $unit = 'celsius')
+{
     // Call the weather API
-    return 'The weather in ' . $location . ' is 72 degrees ' . $unit;
+    return 'The weather in '.$location.' is 72 degrees '.$unit;
 }
 
 print_r($response->meta());
