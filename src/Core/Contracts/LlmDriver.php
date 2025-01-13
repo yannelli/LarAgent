@@ -14,9 +14,9 @@ interface LlmDriver
      * @param  array  $messages  Array of messages in the format:
      *                           ['role' => 'user|system|assistant', 'content' => '...']
      * @param  array  $options  Additional options like temperature, max_tokens, etc.
-     * @return ToolCallMessage|AssistantMessage The response from the LLM in a structured format.
+     * @return AssistantMessage The response from the LLM in a structured format.
      */
-    public function sendMessage(array $messages, array $options = []): ToolCallMessage|AssistantMessage;
+    public function sendMessage(array $messages, array $options = []): AssistantMessage;
 
     /**
      * Register a tool for the LLM to use.

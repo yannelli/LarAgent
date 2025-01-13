@@ -3,16 +3,19 @@
 namespace Maestroerror\LarAgent\Core\Abstractions;
 
 use ArrayAccess;
+use JsonSerializable;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Core\Enums\Role;
 
-abstract class Message implements ArrayAccess, MessageInterface
+abstract class Message implements ArrayAccess, JsonSerializable, MessageInterface
 {
-    protected string $role;  // Represents the sender or role (e.g., "user", "agent")
+    public string $role;  // Represents the sender or role (e.g., "user", "agent")
 
-    protected string|array $content;  // The actual message content
+    public string|array $content;  // The actual message content
 
     protected array $metadata;  // Additional data about the message
+
+    private array $dynamicProperties = [];
 
     public function __construct(string $role, string|array $content, array $metadata = [])
     {
@@ -32,6 +35,11 @@ abstract class Message implements ArrayAccess, MessageInterface
         return $this->content;
     }
 
+    public function get(string $key): mixed
+    {
+        return $this->{$key} ?? null;
+    }
+
     public function setContent(string|array $message): void
     {
         $this->content = $message;
@@ -49,13 +57,57 @@ abstract class Message implements ArrayAccess, MessageInterface
 
     public function toArray(): array
     {
+        $properties = get_object_vars($this);
+
+        // Merge with dynamic properties
+        if (isset($this->dynamicProperties)) {
+            $properties = array_merge($properties, $this->dynamicProperties);
+        }
+
+        return $properties;
+    }
+
+    public function toArrayWithMeta(): array {
         return [
-            'role' => $this->role,
-            'content' => $this->content,
+            ...$this->toArray(),
+            'metadata' => $this->metadata,
         ];
     }
 
+    public function jsonSerialize(): array
+    {
+        return $this->toArrayWithMeta();
+    }
+
+    // Utility methods
+
+    public function buildFromArray(array $data): self
+    {
+        self::validateRole($data['role'] ?? "");
+
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            } else {
+                $this->{$key} = $value;
+            }
+        }
+        return $this;
+    }
+
+    public function buildFromJson(string $json): self
+    {
+        $data = json_decode($json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \InvalidArgumentException("Invalid JSON: " . json_last_error_msg());
+        }
+
+        return $this->fromArray($data);
+    }
+
     // Implementation of ArrayAccess
+
     public function offsetExists($offset): bool
     {
         return isset($this->toArray()[$offset]);
@@ -83,6 +135,30 @@ abstract class Message implements ArrayAccess, MessageInterface
             return $this->getContent();
         } else {
             return $this->getContent()[0]['text'];
+        }
+    }
+
+    public function __set(string $name, $value): void
+    {
+        $this->dynamicProperties[$name] = $value;
+    }
+
+    public function __get(string $name)
+    {
+        return $this->dynamicProperties[$name] ?? null;
+    }
+
+    protected static function validateRole(string $role): void
+    {
+        if (empty($role)) {
+            throw new \InvalidArgumentException('Role cannot be empty.');
+        }
+
+        // Validate role using the Role enum
+        $roleEnum = Role::tryFrom($role);
+
+        if (!$roleEnum) {
+            throw new \InvalidArgumentException("Invalid role: {$role}");
         }
     }
 }

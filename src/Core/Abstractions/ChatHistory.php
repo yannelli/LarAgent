@@ -16,11 +16,11 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 
     protected string $name; // History identifier
 
-    public function __construct(string $name, int $contextWindow = 60000)
+    public function __construct(string $name, array $options = [])
     {
         $this->name = $name;
         $this->readFromMemory();
-        $this->contextWindow = $contextWindow;
+        $this->contextWindow = $options['context_window'] ?? 60000;
     }
 
     public function addMessage(MessageInterface $message): void

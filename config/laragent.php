@@ -2,7 +2,7 @@
 
 // config for Maestroerror/LarAgent
 return [
-    'default_driver' => \Maestroerror\LarAgent\Drivers\OpenAiDriver::class,
+    'default_driver' => \Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver::class,
     'default_chat_history' => \Maestroerror\LarAgent\ChatHistory\InMemoryChatHistory::class,
 
     'providers' => [
@@ -18,7 +18,7 @@ return [
             'name' => 'mini',
             'model' => 'gpt-3.5-turbo',
             'api_key' => env('CUSTOM_API_KEY'),
-            'driver' => \Maestroerror\LarAgent\Drivers\OpenAiDriver::class,
+            'driver' => \Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver::class,
             'chat_history' => \Maestroerror\LarAgent\ChatHistory\InMemoryChatHistory::class,
             'default_context_window' => 15000,
         ],

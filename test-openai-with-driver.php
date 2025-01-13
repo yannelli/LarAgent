@@ -2,15 +2,23 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use Maestroerror\LarAgent\Drivers\OpenAiDriver;
+use Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver;
 use Maestroerror\LarAgent\History\InMemoryChatHistory;
 use Maestroerror\LarAgent\Message;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Tool;
+use Maestroerror\LarAgent\History\JsonChatHistory;
+
 
 $yourApiKey = include 'openai-api-key.php';
 $driver = new OpenAiDriver($yourApiKey);
-$chatHistory = new InMemoryChatHistory('test-chat-history');
+$chatHistory = new InMemoryChatHistory('test-chat-history', [
+    "context_window" => 60000,
+]);
+
+var_dump(new JsonChatHistory('test-chat-history', [
+    "context_window" => 60000,
+]));
 
 // Tool calling example
 $userMessage = Message::user('What\'s the weather like in Boston? I prefer celsius');
@@ -22,7 +30,7 @@ $tool = Tool::create($toolName, 'Get the current weather in a given location');
 $tool->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
     ->addProperty('unit', 'string', 'The unit of temperature', ['celsius', 'fahrenheit'])
     ->setRequired('location')
-    ->setMetaData(['sent_at' => '2024-01-01']) // @todo where to use tool's meta data?
+    ->setMetaData(['sent_at' => '2024-01-01'])
     // ->setCallback('get_current_weather')
     ->setCallback(function ($location, $unit = 'celsius') {
         // "Call the weather API"

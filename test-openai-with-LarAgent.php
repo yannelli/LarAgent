@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use Maestroerror\LarAgent\Drivers\OpenAiDriver;
+use Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver;
 use Maestroerror\LarAgent\History\InMemoryChatHistory;
 use Maestroerror\LarAgent\LarAgent;
 use Maestroerror\LarAgent\Message;
@@ -57,7 +57,7 @@ $tool = Tool::create($toolName, 'Get the current weather in a given location');
 $tool->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
     ->addProperty('unit', 'string', 'The unit of temperature', ['celsius', 'fahrenheit'])
     ->setRequired('location')
-    ->setMetaData(['sent_at' => '2024-01-01']) // @todo where to use tool's meta data?
+    ->setMetaData(['sent_at' => '2024-01-01'])
     // ->setCallback('get_current_weather')
     ->setCallback(function ($location, $unit = 'fahrenheit') {
         // "Call the weather API"
@@ -80,7 +80,7 @@ $agent->afterToolExecution(function ($agent, $tool, &$result) {
 
 $agent->afterSend(function ($agent, $history, $message) use ($chatKey) {
     if ($message instanceof ToolCallMessage) {
-        echo $message->getCallId()."\n";
+        // echo $message->getCallId()."\n";
     } else {
         $usage = $message->getMetadata()['usage'];
         echo $usage->totalTokens.' Tokens used in chat: '.$chatKey."\n";

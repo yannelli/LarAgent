@@ -65,7 +65,7 @@ trait Hooks
         return $this;
     }
 
-    protected function processBeforeSend(ChatHistoryInterface $history, MessageInterface $message): ?bool
+    protected function processBeforeSend(ChatHistoryInterface $history, ?MessageInterface $message): ?bool
     {
         foreach ($this->beforeSendCallbacks as $callback) {
             // ($agent, $message)
@@ -125,7 +125,7 @@ trait Hooks
         return $this;
     }
 
-    protected function processBeforeResponse(ChatHistoryInterface $history, MessageInterface $message): ?bool
+    protected function processBeforeResponse(ChatHistoryInterface $history, ?MessageInterface $message): ?bool
     {
         foreach ($this->afterResponseCallbacks as $callback) {
             // ($agent, $message)

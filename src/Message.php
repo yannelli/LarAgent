@@ -17,11 +17,21 @@ class Message extends AbstractMessage
     // Create custom message, non-typed
     public static function create(string $role, string|array $content, array $metadata = []): MessageInterface
     {
-        if (empty($role)) {
-            throw new \InvalidArgumentException('Role cannot be empty.');
-        }
+        self::validateRole($role);
 
         return new self($role, $content, $metadata);
+    }
+
+    public static function fromArray(array $data): MessageInterface
+    {
+        $msg = new self("", "");
+        return $msg->buildFromArray($data);
+    }
+
+    public static function fromJSON(string $json): MessageInterface
+    {
+        $msg = new self("", "");
+        return $msg->buildFromJson($json);
     }
 
     public static function assistant(string $content, array $metadata = []): MessageInterface
@@ -42,10 +52,5 @@ class Message extends AbstractMessage
     public static function toolCall(string $toolCallId, string $toolName, string $jsonArgs, array $metadata = []): MessageInterface
     {
         return new ToolCallMessage($toolCallId, $toolName, $jsonArgs, $metadata);
-    }
-
-    public static function toolResult(ToolInterface $tool, string $result, array $metadata = []): MessageInterface
-    {
-        return new ToolResultMessage($tool, $result, $metadata);
     }
 }

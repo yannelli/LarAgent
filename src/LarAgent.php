@@ -6,7 +6,10 @@ use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Core\Traits\Hooks;
+use Maestroerror\LarAgent\Tool;
+use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
+use Maestroerror\LarAgent\Messages\ToolResultMessage;
 
 class LarAgent
 {
@@ -24,7 +27,7 @@ class LarAgent
 
     protected string $instructions;
 
-    protected MessageInterface $message;
+    protected ?MessageInterface $message;
 
     protected array $responseSchema;
 
@@ -199,7 +202,7 @@ class LarAgent
         }
 
         // Register tools
-        if (! empty($this->tools)) {
+        if (!empty($this->tools)) {
             foreach ($this->tools as $tool) {
                 $this->driver->registerTool($tool);
             }
@@ -211,7 +214,7 @@ class LarAgent
         }
 
         // Before send (Before adding message in chat history)
-        if ($this->processBeforeSend($this->chatHistory, $this->message) === false) {
+        if ($this->processBeforeSend($this->chatHistory, $this->getCurrentMessage()) === false) {
             return null;
         }
 
@@ -228,13 +231,12 @@ class LarAgent
             return null;
         }
 
-        // @todo Enable parallel function handling
         if ($response instanceof ToolCallMessage) {
             // Process tool
-            $result = $this->processTool($response);
-
-            // $response = $this->send(Message::toolResult($tool, $result));
-            return $this->withMessage(Message::toolResult($tool, $result))->run();
+            $this->processTools($response);
+            // Set message to null to skip adding it again in chat history
+            $this->message = null;
+            return $this->run();
         }
 
         // Before saving chat history
@@ -257,15 +259,18 @@ class LarAgent
 
     // Helper methods
 
-    protected function send(MessageInterface $message): ?MessageInterface
+    protected function send(?MessageInterface $message): ?MessageInterface
     {
-        $this->chatHistory->addMessage($message);
+        if ($message) {
+            $this->chatHistory->addMessage($message);
+        }
         // Before response (Before sending message to LLM)
         // If any callback will return false, it will stop the process silently
         // If you want to rise an exception, you can do it in the callback
         if ($this->processBeforeResponse($this->chatHistory, $message) === false) {
             return null;
         }
+
         $response = $this->driver->sendMessage($this->chatHistory->toArray(), $this->buildConfig());
         // After response (After receiving message from LLM)
         $this->processAfterResponse($response);
@@ -292,17 +297,36 @@ class LarAgent
         $this->chatHistory->addMessage(Message::system($this->getInstructions()));
     }
 
-    protected function processTool(ToolCallMessage $message): mixed
+    protected function processTools(ToolCallMessage $message): void
     {
-        $tool = $this->driver->getTool($message->getToolName())
-            ->setCallId($message->getCallId())
-            ->setArguments(json_decode($message->getToolArguments(), true));
-        // Before tool execution
-        $this->processBeforeToolExecution($tool);
-        $result = $tool->execute();
-        // After tool execution
-        $this->processAfterToolExecution($tool, $result);
+        foreach ($message->getToolCalls() as $toolCall) {
+            $result = $this->processToolCall($toolCall);
+            if (!$result) {
+                continue;
+            }
+            $this->chatHistory->addMessage($result);
+        }
+    }
 
-        return $result;
+    protected function processToolCall(ToolCallInterface $toolCall): ?ToolResultMessage
+    {
+        $tool = $this->driver->getTool($toolCall->getToolName());
+        $args = json_decode($toolCall->getArguments(), true);
+        // Before tool execution, skip tool if false returned
+        if ($this->processBeforeToolExecution($tool) === false) {
+            return null;
+        }
+
+        $result = $tool->execute($args);
+
+        // After tool execution, skip adding result to chat history if false returned
+        if ($this->processAfterToolExecution($tool, $result) === false) {
+            return null;
+        }
+
+        // Build tool result message content
+        $messageArray = $this->driver->toolResultToMessage($toolCall, $result);
+
+        return new ToolResultMessage($messageArray);
     }
 }

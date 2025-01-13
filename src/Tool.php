@@ -15,16 +15,15 @@ class Tool extends AbstractTool
         return $this;
     }
 
-    public function execute(): mixed
+    public function execute(array $input): mixed
     {
-        $input = $this->args;
         if ($this->callback === null) {
             throw new \BadMethodCallException('No callback defined for execution.');
         }
 
         // Validate required parameters
         foreach ($this->required as $param) {
-            if (! array_key_exists($param, $input)) {
+            if (!array_key_exists($param, $input)) {
                 throw new \InvalidArgumentException("Missing required parameter: {$param}");
             }
         }

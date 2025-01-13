@@ -58,5 +58,5 @@ interface Tool
     /**
      * Execute the tool's logic with input parameters.
      */
-    public function execute(): mixed;
+    public function execute(array $input): mixed;
 }

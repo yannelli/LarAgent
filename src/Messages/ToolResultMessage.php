@@ -9,29 +9,11 @@ use Maestroerror\LarAgent\Core\Enums\Role;
 
 class ToolResultMessage extends Message implements MessageInterface
 {
-    protected string $toolCallId;
+    // Public properties are returned in the array representation of the object
 
-    public function __construct(ToolInterface $tool, mixed $result, array $metadata = [])
+    public function __construct(array $message, array $metadata = [])
     {
-        $args = $tool->getArguments();
-        $content[$tool->getName()] = $result;
-
-        $content = json_encode([
-            ...$args,
-            ...$content,
-        ]);
-
-        $this->toolCallId = $tool->getCallId();
-
-        parent::__construct(Role::TOOL->value, $content, $metadata);
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'role' => $this->getRole(),
-            'content' => $this->getContent(),
-            'tool_call_id' => $this->toolCallId,
-        ];
+        parent::__construct(Role::TOOL->value, "", $metadata);
+        $this->buildFromArray($message);
     }
 }

@@ -8,9 +8,15 @@ interface Message
 
     public function getContent(): string|array;
 
+    public function get(string $key): mixed;
+
     public function getMetadata(): array;
 
     public function setMetadata(array $data): void;
 
     public function toArray(): array;
+
+    public function toArrayWithMeta(): array;
+
+    public function jsonSerialize(): array;
 }
