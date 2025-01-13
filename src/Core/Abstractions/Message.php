@@ -67,7 +67,8 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
         return $properties;
     }
 
-    public function toArrayWithMeta(): array {
+    public function toArrayWithMeta(): array
+    {
         return [
             ...$this->toArray(),
             'metadata' => $this->metadata,
@@ -83,7 +84,7 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
 
     public function buildFromArray(array $data): self
     {
-        self::validateRole($data['role'] ?? "");
+        self::validateRole($data['role'] ?? '');
 
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
@@ -92,6 +93,7 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
                 $this->{$key} = $value;
             }
         }
+
         return $this;
     }
 
@@ -100,7 +102,7 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
         $data = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException("Invalid JSON: " . json_last_error_msg());
+            throw new \InvalidArgumentException('Invalid JSON: '.json_last_error_msg());
         }
 
         return $this->fromArray($data);
@@ -157,7 +159,7 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
         // Validate role using the Role enum
         $roleEnum = Role::tryFrom($role);
 
-        if (!$roleEnum) {
+        if (! $roleEnum) {
             throw new \InvalidArgumentException("Invalid role: {$role}");
         }
     }

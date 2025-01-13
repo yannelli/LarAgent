@@ -121,7 +121,5 @@ abstract class Tool implements ToolInterface
         ];
     }
 
-    
-
     abstract public function execute(array $input): mixed;
 }

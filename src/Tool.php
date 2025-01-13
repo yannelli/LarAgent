@@ -23,7 +23,7 @@ class Tool extends AbstractTool
 
         // Validate required parameters
         foreach ($this->required as $param) {
-            if (!array_key_exists($param, $input)) {
+            if (! array_key_exists($param, $input)) {
                 throw new \InvalidArgumentException("Missing required parameter: {$param}");
             }
         }

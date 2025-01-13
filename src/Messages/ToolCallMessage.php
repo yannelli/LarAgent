@@ -3,12 +3,11 @@
 namespace Maestroerror\LarAgent\Messages;
 
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Enums\Role;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
 
 class ToolCallMessage extends AssistantMessage implements MessageInterface
 {
     protected array $toolCalls = [];
+
     protected mixed $toMessageCallback;
 
     public function __construct(array $toolCalls, array $message, array $metadata = [])
