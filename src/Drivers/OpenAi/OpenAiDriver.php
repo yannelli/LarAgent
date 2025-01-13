@@ -36,7 +36,7 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
         }
 
         // Add tools to payload if any are registered
-        if (!empty($this->tools)) {
+        if (! empty($this->tools)) {
             $tools = $this->getRegisteredTools();
             foreach ($tools as $tool) {
                 // Add a default property to bypass schema check of openai-php/client if no properties are defined
@@ -78,7 +78,6 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
         throw new \Exception('Unexpected finish reason: '.$finishReason);
     }
 
-    
     public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array
     {
         // Build toolCall message content from toolCall

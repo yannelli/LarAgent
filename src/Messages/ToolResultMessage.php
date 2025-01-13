@@ -4,7 +4,6 @@ namespace Maestroerror\LarAgent\Messages;
 
 use Maestroerror\LarAgent\Core\Abstractions\Message;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
 use Maestroerror\LarAgent\Core\Enums\Role;
 
 class ToolResultMessage extends Message implements MessageInterface
@@ -13,7 +12,7 @@ class ToolResultMessage extends Message implements MessageInterface
 
     public function __construct(array $message, array $metadata = [])
     {
-        parent::__construct(Role::TOOL->value, "", $metadata);
+        parent::__construct(Role::TOOL->value, '', $metadata);
         $this->buildFromArray($message);
     }
 }

@@ -5,9 +5,8 @@ namespace Maestroerror\LarAgent;
 use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Traits\Hooks;
-use Maestroerror\LarAgent\Tool;
 use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
+use Maestroerror\LarAgent\Core\Traits\Hooks;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
 
@@ -216,7 +215,7 @@ class LarAgent
         }
 
         // Register tools
-        if (!empty($this->tools)) {
+        if (! empty($this->tools)) {
             foreach ($this->tools as $tool) {
                 $this->driver->registerTool($tool);
             }
@@ -250,6 +249,7 @@ class LarAgent
             $this->processTools($response);
             // Set message to null to skip adding it again in chat history
             $this->message = null;
+
             return $this->run();
         }
 
@@ -319,7 +319,7 @@ class LarAgent
     {
         foreach ($message->getToolCalls() as $toolCall) {
             $result = $this->processToolCall($toolCall);
-            if (!$result) {
+            if (! $result) {
                 continue;
             }
             $this->chatHistory->addMessage($result);

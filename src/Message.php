@@ -4,11 +4,9 @@ namespace Maestroerror\LarAgent;
 
 use Maestroerror\LarAgent\Core\Abstractions\Message as AbstractMessage;
 use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\SystemMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
 
 // Accessor, Simplified API for messages
@@ -28,13 +26,15 @@ class Message extends AbstractMessage
      */
     public static function fromArray(array $data): MessageInterface
     {
-        $msg = new self("", "");
+        $msg = new self('', '');
+
         return $msg->buildFromArray($data);
     }
 
     public static function fromJSON(string $json): MessageInterface
     {
-        $msg = new self("", "");
+        $msg = new self('', '');
+
         return $msg->buildFromJson($json);
     }
 

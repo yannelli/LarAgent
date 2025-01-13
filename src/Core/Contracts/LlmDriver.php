@@ -4,7 +4,6 @@ namespace Maestroerror\LarAgent\Core\Contracts;
 
 use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
 
 interface LlmDriver
 {

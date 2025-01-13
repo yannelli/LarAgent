@@ -8,7 +8,7 @@ use Maestroerror\LarAgent\Message;
 
 class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
 {
-    protected string $folder = "";
+    protected string $folder = '';
 
     public function __construct(string $name, array $options = [])
     {
@@ -44,7 +44,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
 
     protected function createFolderIfNotExists(): void
     {
-        if (!file_exists($this->folder)) {
+        if (! file_exists($this->folder)) {
             mkdir($this->folder, 0777, true);
         }
     }
@@ -52,12 +52,13 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     protected function getSafeName(): string
     {
         $name = $this->getIdentifier();
+
         return preg_replace('/[^A-Za-z0-9_\-]/', '_', $name); // Replace unsafe characters with underscores
     }
 
     protected function getFullPath(): string
     {
-        return $this->folder . "/" . $this->getSafeName() . ".json";
+        return $this->folder.'/'.$this->getSafeName().'.json';
     }
 
     protected function buildMessages(array $data): array

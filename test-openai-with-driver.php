@@ -4,20 +4,19 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver;
 use Maestroerror\LarAgent\History\InMemoryChatHistory;
+use Maestroerror\LarAgent\History\JsonChatHistory;
 use Maestroerror\LarAgent\Message;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Tool;
-use Maestroerror\LarAgent\History\JsonChatHistory;
-
 
 $yourApiKey = include 'openai-api-key.php';
 $driver = new OpenAiDriver($yourApiKey);
 $chatHistory = new InMemoryChatHistory('test-chat-history', [
-    "context_window" => 60000,
+    'context_window' => 60000,
 ]);
 
 var_dump(new JsonChatHistory('test-chat-history', [
-    "context_window" => 60000,
+    'context_window' => 60000,
 ]));
 
 // Tool calling example
