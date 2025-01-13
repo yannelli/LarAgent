@@ -64,7 +64,7 @@ $tool->addProperty('location', 'string', 'The city and state, e.g. San Francisco
         return 'The weather in '.$location.' is 72 degrees '.$unit;
     });
 
-$userMessage = Message::user('What\'s the weather like in Boston? I prefer celsius');
+$userMessage = Message::user('What\'s the weather like in Boston and Los Angeles? I prefer celsius');
 $instuctions = 'You are weather assistant and always respond using celsius. If it provided as fahrenheit, convert it to celsius.';
 
 $agent->setTools([$tool])->structured($weatherInfoSchema)

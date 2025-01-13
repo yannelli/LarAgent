@@ -22,6 +22,10 @@ class Message extends AbstractMessage
         return new self($role, $content, $metadata);
     }
 
+    /**
+     * Create a message from an array
+     * !!! Use it with caution, only for internal use, avoiding direct user input
+     */
     public static function fromArray(array $data): MessageInterface
     {
         $msg = new self("", "");

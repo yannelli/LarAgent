@@ -57,7 +57,10 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
 
     public function toArray(): array
     {
-        $properties = get_object_vars($this);
+        $properties = [
+            'role' => $this->getRole(),
+            'content' => $this->getContent(),
+        ];
 
         // Merge with dynamic properties
         if (isset($this->dynamicProperties)) {

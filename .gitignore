@@ -32,3 +32,4 @@ testbench.yaml
 /coverage
 
 /openai-api-key.php
+/chat-history/*

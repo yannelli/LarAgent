@@ -12,9 +12,9 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
 
     public function __construct(string $name, array $options = [])
     {
-        parent::__construct($name, $options);
         // By default store the JSON files in the json_storage folder at project root
         $this->folder = $options['folder'] ?? dirname(__DIR__, 2) . "/json_storage";
+        parent::__construct($name, $options);
     }
 
     public function readFromMemory(): void
@@ -23,17 +23,23 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
         $this->createFolderIfNotExists();
         // Get full file location
         $file = $this->getFullPath();
+        if (file_exists($file) === false) {
+            $this->messages = [];
+            return;
+        }
         // Read JSON
         $content = file_get_contents($file);
         // Build messages
-        $this->messages = json_decode($content, true);
+        $this->messages = $this->buildMessages(json_decode($content, true));
     }
 
     public function writeToMemory(): void
     {
         $this->createFolderIfNotExists();
-        // @todo Implement writeToMemory() method.
-
+        // Get full file location
+        $file = $this->getFullPath();
+        // Create json file
+        file_put_contents($file, json_encode($this->toArray()));
     }
 
     protected function createFolderIfNotExists(): void
@@ -57,8 +63,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     protected function buildMessages(array $data): array
     {
         return array_map(function ($message) {
-            // @todo Implement buildMessages() method.
-            return Message::create($message['role'], $message['content'], $message['metadata']);
+            return Message::fromArray($message);
         }, $data);
     }
 }

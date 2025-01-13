@@ -25,6 +25,8 @@ class LarAgent
 
     protected int $reinjectInstructionsPer = 0; // 0 Means never
 
+    protected bool $parallelToolCalls = true;
+
     protected string $instructions;
 
     protected ?MessageInterface $message;
@@ -181,6 +183,18 @@ class LarAgent
         return $this;
     }
 
+    public function getParallelToolCalls(): bool
+    {
+        return $this->parallelToolCalls ?? false;
+    }
+
+    public function setParallelToolCalls(bool $parallelToolCalls): self
+    {
+        $this->parallelToolCalls = $parallelToolCalls;
+
+        return $this;
+    }
+
     // Execution method
     public function run(): MessageInterface|array|null
     {
@@ -281,15 +295,19 @@ class LarAgent
 
     protected function buildConfig(): array
     {
-        return [
+        $configs = [
             'model' => $this->getModel(),
             'max_completion_tokens' => $this->getMaxCompletionTokens(),
             'temperature' => $this->getTemperature(),
-            // @todo Enable parallel function handling and make this config optional
-            'parallel_tool_calls' => false,
-            // @todo make tool choice controllable (required & specific tool)
-            'tool_choice' => 'auto',
         ];
+
+        if (!empty($this->tools)) {
+            $configs['parallel_tool_calls'] = $this->getParallelToolCalls();
+            // @todo make tool choice controllable (required & specific tool)
+            $configs['tool_choice'] = 'auto';
+        }
+
+        return $configs;
     }
 
     protected function injectInstructions(): void
