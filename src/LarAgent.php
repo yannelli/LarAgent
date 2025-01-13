@@ -301,7 +301,7 @@ class LarAgent
             'temperature' => $this->getTemperature(),
         ];
 
-        if (!empty($this->tools)) {
+        if (! empty($this->tools)) {
             $configs['parallel_tool_calls'] = $this->getParallelToolCalls();
             // @todo make tool choice controllable (required & specific tool)
             $configs['tool_choice'] = 'auto';
