@@ -3,10 +3,8 @@
 namespace Maestroerror\LarAgent;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Maestroerror\LarAgent\LarAgent;
-use Maestroerror\LarAgent\Message;
+use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 
 class Agent
 {
@@ -28,9 +26,9 @@ class Agent
 
     protected string $driver;
 
-    protected string $provider = "default";
+    protected string $provider = 'default';
 
-    protected string $providerName = "";
+    protected string $providerName = '';
 
     protected LarAgent $agent;
 
@@ -101,47 +99,57 @@ class Agent
         return $this->agent->run();
     }
 
-    public function instructions(): string {
+    public function instructions(): string
+    {
         return $this->instructions;
     }
 
-    public function prompt(string $message): string {
+    public function prompt(string $message): string
+    {
         return $message;
     }
 
-    public function structuredOutput(): ?array {
+    public function structuredOutput(): ?array
+    {
         return $this->responseSchema ?? null;
     }
 
     // Public accessors / mutators
 
-    public function setChatSessionId(string $id): static {
+    public function setChatSessionId(string $id): static
+    {
         $this->chatSessionId = $this->buildSessionId($id);
+
         return $this;
     }
 
-    public function getChatSessionId(): string {
+    public function getChatSessionId(): string
+    {
         return $this->chatSessionId;
     }
 
-    public function getProviderName(): string {
+    public function getProviderName(): string
+    {
         return $this->providerName;
     }
 
-    public function getTools(): array {
+    public function getTools(): array
+    {
         // @todo build tools from "methodTool" too
         return array_map(function ($tool) {
-            return new $tool();
+            return new $tool;
         }, $this->tools);
     }
 
-    public function initHistory(): void {
+    public function initHistory(): void
+    {
         $this->chatHistory = new $this->history($this->getChatSessionId());
     }
 
     // Helper methods
 
-    protected function buildSessionId(string $id) {
+    protected function buildSessionId(string $id)
+    {
         return sprintf(
             '%s_%s_%s',
             class_basename(static::class),
@@ -150,41 +158,45 @@ class Agent
         );
     }
 
-    protected function getProviderData(): ?array {
+    protected function getProviderData(): ?array
+    {
         return config("laragent.providers.{$this->provider}");
     }
-    
-    protected function setupDriverConfigs(array $providerData): void {
-        if (!isset($this->model) && isset($providerData['model'])) {
+
+    protected function setupDriverConfigs(array $providerData): void
+    {
+        if (! isset($this->model) && isset($providerData['model'])) {
             $this->model = $providerData['model'];
         }
-        if (!isset($this->maxCompletionTokens) && isset($providerData['default_max_completion_tokens'])) {
+        if (! isset($this->maxCompletionTokens) && isset($providerData['default_max_completion_tokens'])) {
             $this->maxCompletionTokens = $providerData['default_max_completion_tokens'];
         }
-        if (!isset($this->contextWindowSize) && isset($providerData['default_context_window'])) {
+        if (! isset($this->contextWindowSize) && isset($providerData['default_context_window'])) {
             $this->contextWindowSize = $providerData['default_context_window'];
         }
-        if (!isset($this->temperature) && isset($providerData['default_temperature'])) {
+        if (! isset($this->temperature) && isset($providerData['default_temperature'])) {
             $this->temperature = $providerData['default_temperature'];
         }
-        if (!isset($this->parallelToolCalls) && isset($providerData['parallel_tool_calls'])) {
+        if (! isset($this->parallelToolCalls) && isset($providerData['parallel_tool_calls'])) {
             $this->parallelToolCalls = $providerData['parallel_tool_calls'];
         }
     }
 
-    protected function initDriver($providerData): void {
+    protected function initDriver($providerData): void
+    {
         $this->llmDriver = new $this->driver([
-            "api_key" => $providerData['api_key'],
+            'api_key' => $providerData['api_key'],
             'api_url' => $providerData['api_url'] ?? null,
         ]);
     }
 
-    protected function setupProviderData(): void {
+    protected function setupProviderData(): void
+    {
         $provider = $this->getProviderData();
-        if (!isset($this->driver)) {
+        if (! isset($this->driver)) {
             $this->driver = $provider['driver'] ?? config('laragent.default_driver');
         }
-        if (!isset($this->history)) {
+        if (! isset($this->history)) {
             $this->history = $provider['chat_history'] ?? config('laragent.default_chat_history');
         }
         $this->providerName = $provider['name'] ?? '';
@@ -193,7 +205,8 @@ class Agent
         $this->initDriver($provider);
     }
 
-    protected function setupAgent(): void {
+    protected function setupAgent(): void
+    {
         $config = [
             'model' => $this->model,
         ];
@@ -212,7 +225,8 @@ class Agent
         $this->agent = new LarAgent($this->llmDriver, $this->chatHistory, $config);
     }
 
-    protected function setup(): void {
+    protected function setup(): void
+    {
         $this->setupProviderData();
         $this->initHistory();
         $this->setupAgent();
