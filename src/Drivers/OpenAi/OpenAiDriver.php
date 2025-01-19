@@ -67,7 +67,7 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
         ];
 
         if ($finishReason === 'tool_calls') {
-            
+
             // Collect tool calls from the response
             $toolCalls = array_map(function ($toolCall) {
                 return new ToolCall($toolCall->id, $toolCall->function->name, $toolCall->function->arguments);
@@ -75,7 +75,7 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
 
             // Build tool calls message with needed structure
             $message = $this->toolCallsToMessage($toolCalls);
-            
+
             return new ToolCallMessage($toolCalls, $message, $metaData);
         }
 

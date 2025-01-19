@@ -13,7 +13,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     public function __construct(string $name, array $options = [])
     {
         // By default store the JSON files in the json_storage folder at project root
-        $this->folder = $options['folder'] ?? dirname(__DIR__, 2) . "/json_storage";
+        $this->folder = $options['folder'] ?? dirname(__DIR__, 2).'/json_storage';
         parent::__construct($name, $options);
     }
 
@@ -25,6 +25,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
         $file = $this->getFullPath();
         if (file_exists($file) === false) {
             $this->messages = [];
+
             return;
         }
         // Read JSON
