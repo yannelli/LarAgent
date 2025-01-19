@@ -10,7 +10,7 @@ use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Tool;
 
 $yourApiKey = include 'openai-api-key.php';
-$driver = new OpenAiDriver(["api_key" => $yourApiKey]);
+$driver = new OpenAiDriver(['api_key' => $yourApiKey]);
 $chatHistory = new InMemoryChatHistory('test-chat-history', [
     'context_window' => 60000,
 ]);
