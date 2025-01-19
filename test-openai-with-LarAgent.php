@@ -11,7 +11,7 @@ use Maestroerror\LarAgent\Tool;
 
 // Setup
 $yourApiKey = include 'openai-api-key.php';
-$driver = new OpenAiDriver($yourApiKey);
+$driver = new OpenAiDriver(["api_key" => $yourApiKey]);
 $chatKey = 'test-chat-history';
 $chatHistory = new InMemoryChatHistory($chatKey);
 
@@ -91,3 +91,25 @@ $response = $agent->run();
 
 // echo $response;
 print_r($response);
+
+/* Outputs:
+Array
+(
+    [locations] => Array
+        (
+            [0] => Array
+                (
+                    [city] => Boston, MA
+                    [weather] => The weather is 22 degrees Celsius.
+                )
+
+            [1] => Array
+                (
+                    [city] => Los Angeles, CA
+                    [weather] => The weather is 22 degrees Celsius.
+                )
+
+        )
+
+)
+ */

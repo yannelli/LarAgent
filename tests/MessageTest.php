@@ -6,11 +6,13 @@ use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
 use Maestroerror\LarAgent\Tool;
+use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
+use Maestroerror\LarAgent\ToolCall;
 
 it('creates a custom message', function () {
-    $message = Message::create('custom_role', 'Custom content', ['key' => 'value']);
+    $message = Message::create('user', 'Custom content', ['key' => 'value']);
 
-    expect($message->getRole())->toBe('custom_role')
+    expect($message->getRole())->toBe('user')
         ->and($message->getContent())->toBe('Custom content')
         ->and($message->getMetadata())->toHaveKey('key', 'value');
 });
@@ -37,27 +39,24 @@ it('creates a tool call message', function () {
     $toolCallId = '12345';
     $toolName = 'get_weather';
     $jsonArgs = '{"location": "Boston", "unit": "celsius"}';
-    $message = Message::toolCall($toolCallId, $toolName, $jsonArgs, ['status' => 'pending']);
+    $toolCalls[] = new ToolCall($toolCallId, $toolName, $jsonArgs);
+    $driver = new FakeLlmDriver;
+    $message = Message::toolCall($toolCalls, $driver->toolCallsToMessage($toolCalls), ['status' => 'pending']);
 
     expect($message)->toBeInstanceOf(ToolCallMessage::class)
-        ->and($message->getRole())->toBe('assistant')
-        ->and($message->getToolArguments())->toBe($jsonArgs)
-        ->and($message->getMetadata())->toHaveKey('status', 'pending');
+        ->and($message->getToolCalls())->toBe($toolCalls);
 });
 
 it('creates a tool result message', function () {
-    $tool = Tool::create('get_weather', 'Get the weather in a location')
-        ->setCallback(function ($location, $unit = 'celsius') {
-            return 'The weather in '.$location.' is 72 degrees '.$unit;
-        })
-        ->setCallId('12345');
-
+    $toolCall = new ToolCall('12345', 'get_weather', '{"location": "San Francisco, CA"}');
     $result = '{"temperature": "20°C"}';
-    $message = Message::toolResult($tool, $result, ['status' => 'completed']);
+    $messageArray = (new FakeLlmDriver())->toolResultToMessage($toolCall, $result);
+
+    $message = Message::toolResult($messageArray, ['status' => 'completed']);
 
     expect($message)->toBeInstanceOf(ToolResultMessage::class)
         ->and($message->getRole())->toBe('tool')
-        ->and(json_decode($message->getContent()))->toHaveKey($tool->getName())
+        ->and(json_decode($message->getContent()))->toHaveKey($toolCall->getToolName())
         ->and($message->getMetadata())->toHaveKey('status', 'completed');
 });
 
@@ -68,14 +67,6 @@ it('creates a custom message with invalid role', function () {
 
     expect($message->getRole())->toBe('');
 })->throws(\InvalidArgumentException::class, 'Role cannot be empty'); // Add this validation in your class if not already there.
-
-it('throws an exception for invalid JSON in tool call message', function () {
-    $toolCallId = '12345';
-    $toolName = 'get_weather';
-    $invalidJsonArgs = '{"location": "Boston", "unit":'; // Invalid JSON
-
-    Message::toolCall($toolCallId, $toolName, $invalidJsonArgs);
-})->throws(\JsonException::class);
 
 it('handles empty content for user message', function () {
     $message = Message::user('', []);

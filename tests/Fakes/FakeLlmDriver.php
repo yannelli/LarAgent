@@ -4,8 +4,10 @@ namespace Maestroerror\LarAgent\Tests\Fakes;
 
 use Maestroerror\LarAgent\Core\Abstractions\LlmDriver;
 use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
+use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
+use Maestroerror\LarAgent\ToolCall;
 
 class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
 {
@@ -34,10 +36,11 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
 
         // Handle different finish reasons
         if ($finishReason === 'tool_calls') {
+            $toolCallId = '12345';
+            $toolCalls[] = new ToolCall($toolCallId, $responseData['toolName'], $responseData['arguments']);
             return new ToolCallMessage(
-                $responseData['callId'] ?? uniqid('tool_call_'),
-                $responseData['toolName'],
-                $responseData['arguments'],
+                $toolCalls,
+                $this->toolCallsToMessage($toolCalls),
                 $responseData['metaData'] ?? []
             );
         }
@@ -50,5 +53,45 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
         }
 
         throw new \Exception('Unexpected finish reason: '.$finishReason);
+    }
+
+    public function toolCallsToMessage(array $toolCalls): array
+    {
+        $toolCallsArray = [];
+        foreach ($toolCalls as $tc) {
+            $toolCallsArray[] = $this->toolCallToContent($tc);
+        }
+
+        return [
+            'role' => 'assistant',
+            'tool_calls' => $toolCallsArray,
+        ];
+    }
+
+    public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array
+    {
+        // Build toolCall message content from toolCall
+        $content = json_decode($toolCall->getArguments(), true);
+        $content[$toolCall->getToolName()] = $result;
+
+        return [
+            'role' => 'tool',
+            'content' => json_encode($content),
+            'tool_call_id' => $toolCall->getId(),
+        ];
+    }
+
+    // Helper methods
+
+    protected function toolCallToContent(ToolCallInterface $toolCall): array
+    {
+        return [
+            'id' => $toolCall->getId(),
+            'type' => 'function',
+            'function' => [
+                'name' => $toolCall->getToolName(),
+                'arguments' => $toolCall->getArguments(),
+            ],
+        ];
     }
 }

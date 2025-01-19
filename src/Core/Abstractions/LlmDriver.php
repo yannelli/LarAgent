@@ -15,6 +15,8 @@ abstract class LlmDriver implements LlmDriverInterface
 
     protected array $tools = [];
 
+    protected array $provider;
+
     public function registerTool(ToolInterface $tool): self
     {
         $name = $tool->getName();
@@ -70,5 +72,15 @@ abstract class LlmDriver implements LlmDriverInterface
     public function structuredOutputEnabled(): bool
     {
         return ! empty($this->getResponseSchema());
+    }
+
+    public function getProviderData(): array
+    {
+        return $this->provider;
+    }
+
+    public function __construct(array $provider = [])
+    {
+        $this->provider = $provider;
     }
 }

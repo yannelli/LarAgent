@@ -42,13 +42,6 @@ interface Tool
     public function setMetaData(array $metaData): self;
 
     /**
-     * Get/Set arguments for execution.
-     */
-    public function setArguments(array $args): self;
-
-    public function getArguments(): array;
-
-    /**
      * Get/Set tool_call_id for execution.
      */
     public function setCallId(string $id): self;

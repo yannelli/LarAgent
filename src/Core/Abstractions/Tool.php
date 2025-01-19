@@ -16,8 +16,6 @@ abstract class Tool implements ToolInterface
 
     protected array $metaData = [];
 
-    protected array $args = [];
-
     protected string $toolCallId;
 
     public function __construct(string $name, string $description, $metaData = [])
@@ -81,17 +79,6 @@ abstract class Tool implements ToolInterface
         return $this->metaData;
     }
 
-    public function setArguments(array $args): self
-    {
-        $this->args = $args;
-
-        return $this;
-    }
-
-    public function getArguments(): array
-    {
-        return $this->args;
-    }
 
     public function setCallId(string $id): self
     {

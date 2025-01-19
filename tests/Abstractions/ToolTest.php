@@ -58,9 +58,7 @@ it('executes the callback with valid parameters and anonymous function callback'
             ];
         });
 
-    $tool->setArguments(['location' => 'San Francisco, CA', 'unit' => 'fahrenheit']);
-
-    $result = $tool->execute();
+    $result = $tool->execute(['location' => 'San Francisco, CA', 'unit' => 'fahrenheit']);
 
     expect($result)
         ->toHaveKeys(['location', 'unit', 'temperature'])
@@ -77,18 +75,14 @@ it('throws an exception if a required parameter is missing', function () {
             return "Weather data for {$location}";
         });
 
-    $tool->setArguments(['unit' => 'celsius']); // Missing 'location'
-
-    $tool->execute();
+    $tool->execute(['unit' => 'celsius']);
 })->throws(InvalidArgumentException::class, 'Missing required parameter: location');
 
 it('throws an exception if no callback is defined', function () {
     $tool = Tool::create('get_current_weather', 'Get the current weather in a given location')
         ->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA');
 
-    $tool->setArguments(['location' => 'San Francisco, CA']);
-
-    $tool->execute();
+    $tool->execute(['location' => 'San Francisco, CA']);
 })->throws(BadMethodCallException::class, 'No callback defined for execution');
 
 it('returns the tool definition as an array', function () {
@@ -121,8 +115,7 @@ it('executes an object method callback', function () {
         ->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
         ->setCallback([$weatherService, 'getWeather']);
 
-    $tool->setArguments(['location' => 'Boston, MA']);
-    $result = $tool->execute();
+    $result = $tool->execute(['location' => 'Boston, MA']);
 
     expect($result)->toBe('Weather for Boston, MA from WeatherService');
 });
@@ -132,8 +125,7 @@ it('executes a static method callback', function () {
         ->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
         ->setCallback([FakeWeatherService::class, 'getWeatherStatic']);
 
-    $tool->setArguments(['location' => 'Los Angeles, CA']);
-    $result = $tool->execute();
+    $result = $tool->execute(['location' => 'Los Angeles, CA']);
 
     expect($result)->toBe('Weather for Los Angeles, CA from StaticWeatherService');
 });
@@ -143,8 +135,7 @@ it('executes a named function callback', function () {
         ->addProperty('location', 'string', 'The city and state, e.g. San Francisco, CA')
         ->setCallback('getWeather');
 
-    $tool->setArguments(['location' => 'New York, NY']);
-    $result = $tool->execute();
+    $result = $tool->execute(['location' => 'New York, NY']);
 
     expect($result)->toBe('Weather for New York, NY');
 });

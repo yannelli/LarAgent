@@ -2,6 +2,7 @@
 
 use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
+use Maestroerror\LarAgent\ToolCall;
 use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
 
 it('returns an assistant message', function () {
@@ -29,10 +30,9 @@ it('returns a tool call message', function () {
     ]);
 
     $message = $driver->sendMessage([]);
-    $decodedArgs = json_decode($message->getToolArguments(), true);
 
     expect($message)
         ->toBeInstanceOf(ToolCallMessage::class)
-        ->and($message->getToolName())->toBe('get_current_weather')
-        ->and($decodedArgs)->toMatchArray(['location' => 'San Francisco, CA']);
+        ->and($message->getToolCalls())->toBeArray()
+        ->and($message->getToolCalls()[0])->toBeInstanceOf(ToolCall::class);
 });

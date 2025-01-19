@@ -8,6 +8,7 @@ use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\SystemMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
+use Maestroerror\LarAgent\Messages\ToolResultMessage;
 
 // Accessor, Simplified API for messages
 class Message extends AbstractMessage
@@ -53,8 +54,13 @@ class Message extends AbstractMessage
         return new SystemMessage($content, $metadata);
     }
 
-    public static function toolCall(string $toolCallId, string $toolName, string $jsonArgs, array $metadata = []): MessageInterface
+    public static function toolCall(array $toolCalls, array $message, array $metadata = []): MessageInterface
     {
-        return new ToolCallMessage($toolCallId, $toolName, $jsonArgs, $metadata);
+        return new ToolCallMessage($toolCalls, $message, $metadata);
+    }
+
+    public static function toolResult(array $message, array $metadata = []): MessageInterface
+    {
+        return new ToolResultMessage($message, $metadata);
     }
 }

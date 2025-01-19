@@ -14,16 +14,26 @@ class OpenAiDriver extends LlmDriver implements LlmDriverInterface
 {
     protected mixed $client;
 
-    public function __construct(string $apiKey = '')
+    public function __construct(array $provider = [])
     {
-        $this->client = OpenAI::client($apiKey);
+        parent::__construct($provider);
+        $this->client = $provider['api_key'] ? OpenAI::client($provider['api_key']) : null;
     }
 
     public function sendMessage(array $messages, array $options = []): AssistantMessage
     {
+        if (empty($this->client)) {
+            throw new \Exception('OpenAI API key is required to use the OpenAI driver.');
+        }
+
+        // Add model if from provider data if not provided via options
+        if (empty($options['model'])) {
+            $options['model'] = $this->getProviderData()['model'] ?? 'gpt-4o-mini';
+        }
+
         $this->setConfig($options);
 
-        $payload = array_merge($this->config, [
+        $payload = array_merge($this->getConfig(), [
             'messages' => $messages,
         ]);
 

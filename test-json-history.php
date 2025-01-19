@@ -11,7 +11,7 @@ use Maestroerror\LarAgent\Tool;
 
 // Setup
 $yourApiKey = include 'openai-api-key.php';
-$driver = new OpenAiDriver($yourApiKey);
+$driver = new OpenAiDriver(["api_key" => $yourApiKey]);
 $chatKey = 'test-json-history';
 $chatHistory = new JsonChatHistory($chatKey, [
     "folder" => __DIR__.'/chat-history',

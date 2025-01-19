@@ -10,7 +10,7 @@ use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Tool;
 
 $yourApiKey = include 'openai-api-key.php';
-$driver = new OpenAiDriver($yourApiKey);
+$driver = new OpenAiDriver(["api_key" => $yourApiKey]);
 $chatHistory = new InMemoryChatHistory('test-chat-history', [
     'context_window' => 60000,
 ]);
@@ -47,8 +47,8 @@ $chatHistory->addMessage($response);
 
 if ($response instanceof ToolCallMessage) {
     $tool = $driver->getTool($response->getToolName())
-        ->setCallId($response->getCallId())->setArguments(json_decode($response->getToolArguments(), true));
-    $result = $tool->execute();
+        ->setCallId($response->getCallId());
+    $result = $tool->execute(json_decode($response->getToolArguments(), true));
 
     $chatHistory->addMessage(Message::toolResult($tool, $result));
 

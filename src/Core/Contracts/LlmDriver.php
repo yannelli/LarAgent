@@ -73,4 +73,11 @@ interface LlmDriver
      * @return array|null The last response or null if no response exists.
      */
     public function getLastResponse(): ?array;
+
+    /**
+     * Get the provider data.
+     *
+     * @return array The provider data.
+     */
+    public function getProviderData(): array;
 }
