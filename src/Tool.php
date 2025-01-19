@@ -8,6 +8,13 @@ class Tool extends AbstractTool
 {
     protected mixed $callback = null;
 
+    public function __construct(?string $name = null, ?string $description = null)
+    {
+        $this->name = $name ?? $this->name;
+        $this->description = $description ?? $this->description;
+        parent::__construct($this->name, $this->description);
+    }
+
     public function setCallback(?callable $callback): Tool
     {
         $this->callback = $callback;

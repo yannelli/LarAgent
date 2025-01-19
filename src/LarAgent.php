@@ -20,7 +20,7 @@ class LarAgent
 
     protected int $maxCompletionTokens = 1000;
 
-    protected int $temperature = 1;
+    protected float $temperature = 1.0;
 
     protected int $reinjectInstructionsPer = 0; // 0 Means never
 
@@ -166,6 +166,7 @@ class LarAgent
         $this->temperature = $configs['temperature'] ?? $this->temperature;
         $this->reinjectInstructionsPer = $configs['reinjectInstructionsPer'] ?? $this->reinjectInstructionsPer;
         $this->model = $configs['model'] ?? $this->model;
+        $this->parallelToolCalls = $configs['parallelToolCalls'] ?? $this->parallelToolCalls;
     }
 
     public function setTools(array $tools): self
@@ -215,7 +216,7 @@ class LarAgent
         }
 
         // Register tools
-        if (! empty($this->tools)) {
+        if (!empty($this->tools)) {
             foreach ($this->tools as $tool) {
                 $this->driver->registerTool($tool);
             }
