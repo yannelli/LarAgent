@@ -79,7 +79,6 @@ abstract class Tool implements ToolInterface
         return $this->metaData;
     }
 
-
     public function setCallId(string $id): self
     {
         $this->toolCallId = $id;

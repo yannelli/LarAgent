@@ -38,6 +38,7 @@ class FakeLlmDriver extends LlmDriver implements LlmDriverInterface
         if ($finishReason === 'tool_calls') {
             $toolCallId = '12345';
             $toolCalls[] = new ToolCall($toolCallId, $responseData['toolName'], $responseData['arguments']);
+
             return new ToolCallMessage(
                 $toolCalls,
                 $this->toolCallsToMessage($toolCalls),

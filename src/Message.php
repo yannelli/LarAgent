@@ -7,8 +7,8 @@ use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
 use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\SystemMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\UserMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
+use Maestroerror\LarAgent\Messages\UserMessage;
 
 // Accessor, Simplified API for messages
 class Message extends AbstractMessage

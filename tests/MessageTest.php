@@ -5,7 +5,6 @@ use Maestroerror\LarAgent\Messages\AssistantMessage;
 use Maestroerror\LarAgent\Messages\ToolCallMessage;
 use Maestroerror\LarAgent\Messages\ToolResultMessage;
 use Maestroerror\LarAgent\Messages\UserMessage;
-use Maestroerror\LarAgent\Tool;
 use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
 use Maestroerror\LarAgent\ToolCall;
 
@@ -50,7 +49,7 @@ it('creates a tool call message', function () {
 it('creates a tool result message', function () {
     $toolCall = new ToolCall('12345', 'get_weather', '{"location": "San Francisco, CA"}');
     $result = '{"temperature": "20°C"}';
-    $messageArray = (new FakeLlmDriver())->toolResultToMessage($toolCall, $result);
+    $messageArray = (new FakeLlmDriver)->toolResultToMessage($toolCall, $result);
 
     $message = Message::toolResult($messageArray, ['status' => 'completed']);
 

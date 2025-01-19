@@ -9,7 +9,7 @@ use Maestroerror\LarAgent\Message;
 
 // Setup
 $yourApiKey = include 'openai-api-key.php';
-$driver = new OpenAiDriver(["api_key" => $yourApiKey]);
+$driver = new OpenAiDriver(['api_key' => $yourApiKey]);
 $chatKey = 'test-json-history';
 $chatHistory = new JsonChatHistory($chatKey, [
     'folder' => __DIR__.'/chat-history',
