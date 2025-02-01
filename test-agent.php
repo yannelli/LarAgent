@@ -60,7 +60,7 @@ class WeatherAgent extends LarAgent\Agent
 {
     protected $model = 'gpt-4o-mini';
 
-    protected $provider = "default";
+    protected $provider = 'default';
 
     // Tool by classes
     protected $tools = [
