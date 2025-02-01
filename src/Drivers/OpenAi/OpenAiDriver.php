@@ -1,13 +1,13 @@
 <?php
 
-namespace Maestroerror\LarAgent\Drivers\OpenAi;
+namespace LarAgent\Drivers\OpenAi;
 
-use Maestroerror\LarAgent\Core\Abstractions\LlmDriver;
-use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
-use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\ToolCall;
+use LarAgent\Core\Abstractions\LlmDriver;
+use LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
+use LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
+use LarAgent\Messages\AssistantMessage;
+use LarAgent\Messages\ToolCallMessage;
+use LarAgent\ToolCall;
 use OpenAI;
 
 class OpenAiDriver extends LlmDriver implements LlmDriverInterface

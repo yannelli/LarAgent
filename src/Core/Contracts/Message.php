@@ -1,12 +1,14 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Contracts;
+namespace LarAgent\Core\Contracts;
 
 interface Message
 {
     public function getRole(): string;
 
     public function getContent(): string|array;
+
+    public function setContent(string|array $message): void;
 
     public function get(string $key): mixed;
 

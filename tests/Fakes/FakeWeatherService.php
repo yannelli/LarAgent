@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestroerror\LarAgent\Tests\Fakes;
+namespace LarAgent\Tests\Fakes;
 
 class FakeWeatherService
 {

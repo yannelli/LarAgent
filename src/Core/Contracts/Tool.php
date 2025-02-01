@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Contracts;
+namespace LarAgent\Core\Contracts;
 
 interface Tool
 {
@@ -40,13 +40,6 @@ interface Tool
     public function getMetaData(): array;
 
     public function setMetaData(array $metaData): self;
-
-    /**
-     * Get/Set tool_call_id for execution.
-     */
-    public function setCallId(string $id): self;
-
-    public function getCallId(): string;
 
     /**
      * Execute the tool's logic with input parameters.

@@ -1,16 +1,16 @@
 <?php
 
-namespace Maestroerror\LarAgent\Facades;
+namespace LarAgent\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Maestroerror\LarAgent\LarAgent
+ * @see \LarAgent\LarAgent
  */
 class LarAgent extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Maestroerror\LarAgent\LarAgent::class;
+        return \LarAgent\LarAgent::class;
     }
 }

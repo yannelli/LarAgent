@@ -1,12 +1,12 @@
 <?php
 
-use Maestroerror\LarAgent\Message;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\ToolResultMessage;
-use Maestroerror\LarAgent\Messages\UserMessage;
-use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
-use Maestroerror\LarAgent\ToolCall;
+use LarAgent\Message;
+use LarAgent\Messages\AssistantMessage;
+use LarAgent\Messages\ToolCallMessage;
+use LarAgent\Messages\ToolResultMessage;
+use LarAgent\Messages\UserMessage;
+use LarAgent\Tests\Fakes\FakeLlmDriver;
+use LarAgent\ToolCall;
 
 it('creates a custom message', function () {
     $message = Message::create('user', 'Custom content', ['key' => 'value']);

@@ -1,11 +1,11 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Abstractions;
+namespace LarAgent\Core\Abstractions;
 
 use ArrayAccess;
 use JsonSerializable;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Enums\Role;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Enums\Role;
 
 abstract class Message implements ArrayAccess, JsonSerializable, MessageInterface
 {
@@ -108,7 +108,7 @@ abstract class Message implements ArrayAccess, JsonSerializable, MessageInterfac
             throw new \InvalidArgumentException('Invalid JSON: '.json_last_error_msg());
         }
 
-        return $this->fromArray($data);
+        return $this->buildFromArray($data);
     }
 
     // Implementation of ArrayAccess

@@ -39,12 +39,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Maestroerror\\LarAgent\\": "src/"
+            "LarAgent\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Maestroerror\\LarAgent\\Tests\\": "tests/",
+            "LarAgent\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },

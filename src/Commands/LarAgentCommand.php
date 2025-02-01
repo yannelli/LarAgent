@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestroerror\LarAgent\Commands;
+namespace LarAgent\Commands;
 
 use Illuminate\Console\Command;
 

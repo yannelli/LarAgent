@@ -1,8 +1,8 @@
 <?php
 
-namespace Maestroerror\LarAgent;
+namespace LarAgent;
 
-use Maestroerror\LarAgent\Commands\LarAgentCommand;
+use LarAgent\Commands\LarAgentCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

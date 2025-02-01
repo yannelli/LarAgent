@@ -1,9 +1,9 @@
 <?php
 
-use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Tests\Fakes\FakeLlmDriver;
-use Maestroerror\LarAgent\ToolCall;
+use LarAgent\Messages\AssistantMessage;
+use LarAgent\Messages\ToolCallMessage;
+use LarAgent\Tests\Fakes\FakeLlmDriver;
+use LarAgent\ToolCall;
 
 it('returns an assistant message', function () {
     $driver = new FakeLlmDriver;

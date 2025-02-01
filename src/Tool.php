@@ -1,12 +1,13 @@
 <?php
 
-namespace Maestroerror\LarAgent;
+namespace LarAgent;
 
-use Maestroerror\LarAgent\Core\Abstractions\Tool as AbstractTool;
+use LarAgent\Core\Abstractions\Tool as AbstractTool;
 
 class Tool extends AbstractTool
 {
     protected mixed $callback = null;
+    protected array $enumTypes = [];
 
     public function __construct(?string $name = null, ?string $description = null)
     {
@@ -22,6 +23,11 @@ class Tool extends AbstractTool
         return $this;
     }
 
+    public function getCallback(): ?callable
+    {
+        return $this->callback;
+    }
+
     public function execute(array $input): mixed
     {
         if ($this->callback === null) {
@@ -35,12 +41,33 @@ class Tool extends AbstractTool
             }
         }
 
+        // Convert enum string values to actual enum instances
+        $convertedInput = $this->convertEnumValues($input);
         // Execute the callback with input
-        return call_user_func($this->callback, ...$input);
+        return call_user_func($this->callback, ...$convertedInput);
     }
 
     public static function create(string $name, string $description): Tool
     {
         return new self($name, $description);
+    }
+
+    protected function convertEnumValues(array $input): array
+    {
+        foreach ($this->enumTypes as $paramName => $enumClass) {
+            if (isset($input[$paramName])) {
+                $input[$paramName] = $enumClass::from($input[$paramName]);
+            }
+        }
+        return $input;
+    }
+
+    protected function resolveEnum(array $enum, string $name): array {
+        // Store the enum class if it's an enum type
+        if (isset($enum['enumClass'])) {
+            $this->enumTypes[$name] = $enum['enumClass'];
+            return $enum['values'];
+        }
+        return $enum;
     }
 }

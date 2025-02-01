@@ -1,8 +1,8 @@
 <?php
 
-use Maestroerror\LarAgent\Core\Enums\Role;
-use Maestroerror\LarAgent\Message;
-use Maestroerror\LarAgent\Messages\UserMessage;
+use LarAgent\Core\Enums\Role;
+use LarAgent\Message;
+use LarAgent\Messages\UserMessage;
 
 it('creates a user message with content and metadata', function () {
     $message = new UserMessage('What is the weather in Boston?', ['key' => 'value']);

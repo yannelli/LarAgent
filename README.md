@@ -33,9 +33,9 @@ Laravel model-lika AI agent classes, extendable, easily maintainable. Fluent & E
 
 namespace App\AiAgents;
 
-use Maestroerror\LarAgent\Agent;
-use Maestroerror\LarAgent\Tool;
-use Maestroerror\LarAgent\ChatHistory\RedisChatHistory;
+use LarAgent\Agent;
+use LarAgent\Tool;
+use LarAgent\ChatHistory\RedisChatHistory;
 use App\AiTools\WeatherTool;
 
 class WeatherAgent extends Agent {
@@ -145,7 +145,7 @@ return [
 ## Usage
 
 ```php
-$larAgent = Maestroerror\LarAgent::setup([]);
+$larAgent = LarAgent::setup([]);
 echo $larAgent->respond('Hello, Maestroerror!');
 ```
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace Maestroerror\LarAgent;
+namespace LarAgent;
 
-use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
-use Maestroerror\LarAgent\Core\Traits\Hooks;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\ToolResultMessage;
+use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
+use LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
+use LarAgent\Core\Traits\Hooks;
+use LarAgent\Messages\ToolCallMessage;
+use LarAgent\Messages\ToolResultMessage;
 
 class LarAgent
 {
@@ -37,6 +37,9 @@ class LarAgent
     protected ChatHistoryInterface $chatHistory;
 
     protected array $tools = [];
+
+    /** @var string|array|null */
+    protected $toolChoice = null;
 
     // Config methods
 
@@ -143,6 +146,82 @@ class LarAgent
         return $this;
     }
 
+    /**
+     * Set tool choice to 'auto' - model can choose to use zero, one, or multiple tools
+     * Only applies if tools are registered.
+     * 
+     * @return self
+     */
+    public function toolAuto(): self
+    {
+        $this->toolChoice = 'auto';
+        return $this;
+    }
+
+    /**
+     * Set tool choice to 'none' - prevent the model from using any tools
+     * This simulates the behavior of not passing any functions
+     * 
+     * @return self
+     */
+    public function toolNone(): self
+    {
+        $this->toolChoice = 'none';
+        return $this;
+    }
+
+    /**
+     * Set tool choice to 'required' - model must use at least one tool
+     * Only applies if tools are registered.
+     * 
+     * @return self
+     */
+    public function toolRequired(): self
+    {
+        $this->toolChoice = 'required';
+        return $this;
+    }
+
+    /**
+     * Force the model to use a specific tool
+     * Only applies if the specified tool is registered.
+     * 
+     * @param string $toolName Name of the tool to force
+     * @return self
+     */
+    public function forceTool($toolName): self
+    {
+        $this->toolChoice = [
+            'type' => 'function',
+            'function' => [
+                'name' => $toolName
+            ]
+        ];
+        return $this;
+    }
+
+    /**
+     * Get the current tool choice configuration
+     * Returns null if no tools are registered or tool choice is not set
+     * 
+     * @return string|array|null Current tool choice setting
+     */
+    public function getToolChoice()
+    {
+        // If no tools registered or choice is 'auto' (default), return null
+        if (empty($this->tools) || $this->toolChoice === null) {
+            return null;
+        }
+
+        // If choice is 'none', always return it even without tools
+        if ($this->toolChoice === 'none') {
+            return 'none';
+        }
+
+        // For other choices, only return if tools are registered
+        return $this->toolChoice;
+    }
+
     // Main API methods
 
     public function __construct(LlmDriverInterface $driver, ChatHistoryInterface $chatHistory)
@@ -167,6 +246,7 @@ class LarAgent
         $this->reinjectInstructionsPer = $configs['reinjectInstructionsPer'] ?? $this->reinjectInstructionsPer;
         $this->model = $configs['model'] ?? $this->model;
         $this->parallelToolCalls = $configs['parallelToolCalls'] ?? $this->parallelToolCalls;
+        $this->toolChoice = $configs['toolChoice'] ?? $this->toolChoice;
     }
 
     public function setTools(array $tools): self
@@ -181,6 +261,11 @@ class LarAgent
         $this->tools[] = $tools;
 
         return $this;
+    }
+
+    public function getTools(): array
+    {
+        return $this->tools;
     }
 
     public function getParallelToolCalls(): bool
@@ -209,7 +294,7 @@ class LarAgent
             $iip = $this->getReinjectInstuctionsPer();
             if ($iip && $iip > 0 && $totalMessages % $iip > 0 && $totalMessages % $iip <= 5) {
                 // If any callback returns false, it will stop the process silently
-                if ($this->processBeforeReinjectingInstructions() !== false) {
+                if ($this->processBeforeReinjectingInstructions($this->chatHistory) !== false) {
                     $this->injectInstructions();
                 }
             }
@@ -304,8 +389,11 @@ class LarAgent
 
         if (! empty($this->tools)) {
             $configs['parallel_tool_calls'] = $this->getParallelToolCalls();
-            // @todo make tool choice controllable (required & specific tool)
-            $configs['tool_choice'] = 'auto';
+            
+            $toolChoice = $this->getToolChoice();
+            if ($toolChoice !== null) {
+                $configs['tool_choice'] = $toolChoice;
+            }
         }
 
         return $configs;

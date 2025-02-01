@@ -1,9 +1,9 @@
 <?php
 
-namespace Maestroerror\LarAgent\Tests;
+namespace LarAgent\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Maestroerror\LarAgent\LarAgentServiceProvider;
+use LarAgent\LarAgentServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

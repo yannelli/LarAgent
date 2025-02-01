@@ -1,9 +1,10 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Contracts;
+namespace LarAgent\Core\Contracts;
 
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
+use LarAgent\Core\Contracts\Tool as ToolInterface;
+use LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
+use LarAgent\Messages\AssistantMessage;
 
 interface LlmDriver
 {
@@ -20,7 +21,6 @@ interface LlmDriver
     /**
      * Register a tool for the LLM to use.
      *
-     * @param  string  $name  The tool's unique name.
      * @param  ToolInterface  $tool  The tool instance.
      */
     public function registerTool(ToolInterface $tool): self;
@@ -80,4 +80,11 @@ interface LlmDriver
      * @return array The provider data.
      */
     public function getProviderData(): array;
+
+    public function structuredOutputEnabled(): bool;
+
+    public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;
+
+    public function toolCallsToMessage(array $toolCalls): array;
+
 }

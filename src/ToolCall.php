@@ -1,8 +1,8 @@
 <?php
 
-namespace Maestroerror\LarAgent;
+namespace LarAgent;
 
-use Maestroerror\LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
+use LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
 
 class ToolCall implements ToolCallInterface
 {

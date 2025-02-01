@@ -1,10 +1,10 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Traits;
+namespace LarAgent\Core\Traits;
 
-use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
+use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Contracts\Tool as ToolInterface;
 
 trait Hooks
 {
@@ -45,11 +45,11 @@ trait Hooks
         return $this;
     }
 
-    protected function processBeforeReinjectingInstructions(): ?bool
+    protected function processBeforeReinjectingInstructions(ChatHistoryInterface $chatHistory): ?bool
     {
         foreach ($this->beforeReinjectCallbacks as $callback) {
             // ($agent)
-            if ($callback($this) === false) {
+            if ($callback($this, $chatHistory) === false) {
                 return false; // Return false if a callback returns false
             }
         }
@@ -127,8 +127,8 @@ trait Hooks
 
     protected function processBeforeResponse(ChatHistoryInterface $history, ?MessageInterface $message): ?bool
     {
-        foreach ($this->afterResponseCallbacks as $callback) {
-            // ($agent, $message)
+        foreach ($this->beforeResponseCallbacks as $callback) {
+            // ($agent, $history, $message)
             if ($callback($this, $history, $message) === false) {
                 return false; // Return false if a callback returns false
             }

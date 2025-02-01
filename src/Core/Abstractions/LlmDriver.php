@@ -1,9 +1,10 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Abstractions;
+namespace LarAgent\Core\Abstractions;
 
-use Maestroerror\LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
+use LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
+use LarAgent\Core\Contracts\Tool as ToolInterface;
+use LarAgent\Core\Contracts\ToolCall as ToolCallInterface;
 
 abstract class LlmDriver implements LlmDriverInterface
 {
@@ -83,4 +84,8 @@ abstract class LlmDriver implements LlmDriverInterface
     {
         $this->provider = $provider;
     }
+
+    public abstract function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;
+
+    public abstract function toolCallsToMessage(array $toolCalls): array;
 }

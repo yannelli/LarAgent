@@ -1,7 +1,7 @@
 <?php
 
-use Maestroerror\LarAgent\History\InMemoryChatHistory;
-use Maestroerror\LarAgent\Messages\UserMessage;
+use LarAgent\History\InMemoryChatHistory;
+use LarAgent\Messages\UserMessage;
 
 it('can add and retrieve messages', function () {
     $chatHistory = new InMemoryChatHistory('test_history');

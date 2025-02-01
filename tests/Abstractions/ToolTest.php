@@ -1,7 +1,7 @@
 <?php
 
-use Maestroerror\LarAgent\Tests\Fakes\FakeWeatherService;
-use Maestroerror\LarAgent\Tool;
+use LarAgent\Tests\Fakes\FakeWeatherService;
+use LarAgent\Tool;
 
 // Test function
 function getWeather($location)

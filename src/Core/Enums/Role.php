@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Enums;
+namespace LarAgent\Core\Enums;
 
 enum Role: string
 {

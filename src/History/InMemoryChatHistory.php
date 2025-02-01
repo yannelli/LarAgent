@@ -1,9 +1,9 @@
 <?php
 
-namespace Maestroerror\LarAgent\History;
+namespace LarAgent\History;
 
-use Maestroerror\LarAgent\Core\Abstractions\ChatHistory;
-use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
+use LarAgent\Core\Abstractions\ChatHistory;
+use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 
 class InMemoryChatHistory extends ChatHistory implements ChatHistoryInterface
 {
@@ -11,13 +11,11 @@ class InMemoryChatHistory extends ChatHistory implements ChatHistoryInterface
 
     public function readFromMemory(): void
     {
-        $this->messages = $this->storage[$this->name] ?? [];
-
+        $this->setMessages($this->storage[$this->getIdentifier()] ?? []);
     }
 
     public function writeToMemory(): void
     {
-        $this->storage[$this->name] = $this->messages;
-
+        $this->storage[$this->getIdentifier()] = $this->getMessages();
     }
 }

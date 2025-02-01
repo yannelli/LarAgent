@@ -1,10 +1,11 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Abstractions;
+namespace LarAgent\Core\Abstractions;
 
 use ArrayAccess;
-use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Message;
 
 abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 {
@@ -16,11 +17,14 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 
     protected string $name; // History identifier
 
+    protected bool $storeMeta; // Store metadata with messages, when using toArray method for storage
+
     public function __construct(string $name, array $options = [])
     {
         $this->name = $name;
         $this->readFromMemory();
         $this->contextWindow = $options['context_window'] ?? 60000;
+        $this->storeMeta = $options['store_meta'] ?? false;
     }
 
     public function addMessage(MessageInterface $message): void
@@ -56,6 +60,16 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
     public function toArray(): array
     {
         return array_map(fn (MessageInterface $message) => $message->toArray(), $this->messages);
+    }
+
+    public function toArrayWithMeta(): array
+    {
+        return array_map(fn (MessageInterface $message) => $message->toArrayWithMeta(), $this->messages);
+    }
+
+    protected function setMessages(array $messages): void
+    {
+        $this->messages = $messages;
     }
 
     // ArrayAccess implementation
@@ -107,5 +121,33 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
     public function truncateOldMessages(int $messagesCount): void
     {
         array_splice($this->messages, 0, $messagesCount);
+    }
+
+    /**
+     * Build messages from an array of data.
+     * Useful with json storage implementations.
+     * 
+     * @param array $data
+     * @return array
+     */
+    protected function buildMessages(array $data): array
+    {
+        return array_map(function ($message) {
+            return Message::fromArray($message);
+        }, $data);
+    }
+
+    /**
+     * Convert messages to an array for storage.
+     * Useful with json storage implementations.
+     * 
+     * @return array
+     */
+    protected function toArrayForStorage(): array
+    {
+        if ($this->storeMeta) {
+            return $this->toArrayWithMeta();
+        }
+        return $this->toArray();
     }
 }

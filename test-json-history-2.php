@@ -2,10 +2,10 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use Maestroerror\LarAgent\Drivers\OpenAi\OpenAiDriver;
-use Maestroerror\LarAgent\History\JsonChatHistory;
-use Maestroerror\LarAgent\LarAgent;
-use Maestroerror\LarAgent\Message;
+use LarAgent\Drivers\OpenAi\OpenAiDriver;
+use LarAgent\History\JsonChatHistory;
+use LarAgent\LarAgent;
+use LarAgent\Message;
 
 // Setup
 $yourApiKey = include 'openai-api-key.php';

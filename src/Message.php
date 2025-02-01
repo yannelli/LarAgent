@@ -1,14 +1,14 @@
 <?php
 
-namespace Maestroerror\LarAgent;
+namespace LarAgent;
 
-use Maestroerror\LarAgent\Core\Abstractions\Message as AbstractMessage;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Messages\AssistantMessage;
-use Maestroerror\LarAgent\Messages\SystemMessage;
-use Maestroerror\LarAgent\Messages\ToolCallMessage;
-use Maestroerror\LarAgent\Messages\ToolResultMessage;
-use Maestroerror\LarAgent\Messages\UserMessage;
+use LarAgent\Core\Abstractions\Message as AbstractMessage;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Messages\AssistantMessage;
+use LarAgent\Messages\SystemMessage;
+use LarAgent\Messages\ToolCallMessage;
+use LarAgent\Messages\ToolResultMessage;
+use LarAgent\Messages\UserMessage;
 
 // Accessor, Simplified API for messages
 class Message extends AbstractMessage

@@ -1,8 +1,8 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Abstractions;
+namespace LarAgent\Core\Abstractions;
 
-use Maestroerror\LarAgent\Core\Contracts\Tool as ToolInterface;
+use LarAgent\Core\Contracts\Tool as ToolInterface;
 
 abstract class Tool implements ToolInterface
 {
@@ -16,7 +16,6 @@ abstract class Tool implements ToolInterface
 
     protected array $metaData = [];
 
-    protected string $toolCallId;
 
     public function __construct(string $name, string $description, $metaData = [])
     {
@@ -44,7 +43,7 @@ abstract class Tool implements ToolInterface
             $property['description'] = $description;
         }
         if ($enum) {
-            $property['enum'] = $enum;
+            $property['enum'] = $this->resolveEnum($enum, $name);
         }
         $this->properties[$name] = $property;
 
@@ -79,18 +78,6 @@ abstract class Tool implements ToolInterface
         return $this->metaData;
     }
 
-    public function setCallId(string $id): self
-    {
-        $this->toolCallId = $id;
-
-        return $this;
-    }
-
-    public function getCallId(): string
-    {
-        return $this->toolCallId;
-    }
-
     public function toArray(): array
     {
         return [
@@ -105,6 +92,10 @@ abstract class Tool implements ToolInterface
                 ],
             ],
         ];
+    }
+
+    protected function resolveEnum(array $enum, string $name): array {
+        return $enum;
     }
 
     abstract public function execute(array $input): mixed;

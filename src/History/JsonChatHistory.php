@@ -1,10 +1,9 @@
 <?php
 
-namespace Maestroerror\LarAgent\History;
+namespace LarAgent\History;
 
-use Maestroerror\LarAgent\Core\Abstractions\ChatHistory;
-use Maestroerror\LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Maestroerror\LarAgent\Message;
+use LarAgent\Core\Abstractions\ChatHistory;
+use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 
 class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
 {
@@ -24,14 +23,15 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
         // Get full file location
         $file = $this->getFullPath();
         if (file_exists($file) === false) {
-            $this->messages = [];
+            $this->setMessages([]);
 
             return;
         }
         // Read JSON
         $content = file_get_contents($file);
         // Build messages
-        $this->messages = $this->buildMessages(json_decode($content, true));
+        $this->setMessages($this->buildMessages(json_decode($content, true)));
+
     }
 
     public function writeToMemory(): void
@@ -40,7 +40,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
         // Get full file location
         $file = $this->getFullPath();
         // Create json file
-        file_put_contents($file, json_encode($this->toArray()));
+        file_put_contents($file, json_encode($this->toArrayForStorage()));
     }
 
     protected function createFolderIfNotExists(): void
@@ -61,11 +61,5 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     {
         return $this->folder.'/'.$this->getSafeName().'.json';
     }
-
-    protected function buildMessages(array $data): array
-    {
-        return array_map(function ($message) {
-            return Message::fromArray($message);
-        }, $data);
-    }
+    
 }

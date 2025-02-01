@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Contracts;
+namespace LarAgent\Core\Contracts;
 
 interface ToolCall
 {

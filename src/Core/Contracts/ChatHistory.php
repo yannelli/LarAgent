@@ -1,8 +1,8 @@
 <?php
 
-namespace Maestroerror\LarAgent\Core\Contracts;
+namespace LarAgent\Core\Contracts;
 
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Contracts\Message as MessageInterface;
 
 interface ChatHistory
 {

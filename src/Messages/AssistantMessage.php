@@ -1,10 +1,10 @@
 <?php
 
-namespace Maestroerror\LarAgent\Messages;
+namespace LarAgent\Messages;
 
-use Maestroerror\LarAgent\Core\Abstractions\Message;
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
-use Maestroerror\LarAgent\Core\Enums\Role;
+use LarAgent\Core\Abstractions\Message;
+use LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Enums\Role;
 
 class AssistantMessage extends Message implements MessageInterface
 {

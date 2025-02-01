@@ -1,8 +1,8 @@
 <?php
 
-namespace Maestroerror\LarAgent\Messages;
+namespace LarAgent\Messages;
 
-use Maestroerror\LarAgent\Core\Contracts\Message as MessageInterface;
+use LarAgent\Core\Contracts\Message as MessageInterface;
 
 class ToolCallMessage extends AssistantMessage implements MessageInterface
 {
