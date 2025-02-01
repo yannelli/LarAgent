@@ -52,7 +52,6 @@ class WeatherTool extends LarAgent\Tool
     }
 }
 
-<<<<<<< HEAD
 enum Unit: string {
     case CELSIUS = 'celsius';
     case FAHRENHEIT = 'fahrenheit';
@@ -120,8 +119,3 @@ echo "\n---\n";
 echo WeatherAgent::for("test_chat")->respond('Thanks for the info. What about New York? I prefer celsus');
 echo "\n---\n";
 echo WeatherAgent::for("test_chat")->respond('Where am I now?');
-=======
-echo WeatherAgent::for('test_chat')->respond('What\'s the weather like in Boston and Los Angeles? I prefer fahrenheit');
-echo "\n";
-echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York?');
->>>>>>> 3a4da20ac494b84d4a256ccf95dfee9aebf071db
