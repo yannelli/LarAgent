@@ -61,5 +61,4 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     {
         return $this->folder.'/'.$this->getSafeName().'.json';
     }
-    
 }

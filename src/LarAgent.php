@@ -149,61 +149,58 @@ class LarAgent
     /**
      * Set tool choice to 'auto' - model can choose to use zero, one, or multiple tools
      * Only applies if tools are registered.
-     * 
-     * @return self
      */
     public function toolAuto(): self
     {
         $this->toolChoice = 'auto';
+
         return $this;
     }
 
     /**
      * Set tool choice to 'none' - prevent the model from using any tools
      * This simulates the behavior of not passing any functions
-     * 
-     * @return self
      */
     public function toolNone(): self
     {
         $this->toolChoice = 'none';
+
         return $this;
     }
 
     /**
      * Set tool choice to 'required' - model must use at least one tool
      * Only applies if tools are registered.
-     * 
-     * @return self
      */
     public function toolRequired(): self
     {
         $this->toolChoice = 'required';
+
         return $this;
     }
 
     /**
      * Force the model to use a specific tool
      * Only applies if the specified tool is registered.
-     * 
-     * @param string $toolName Name of the tool to force
-     * @return self
+     *
+     * @param  string  $toolName  Name of the tool to force
      */
     public function forceTool($toolName): self
     {
         $this->toolChoice = [
             'type' => 'function',
             'function' => [
-                'name' => $toolName
-            ]
+                'name' => $toolName,
+            ],
         ];
+
         return $this;
     }
 
     /**
      * Get the current tool choice configuration
      * Returns null if no tools are registered or tool choice is not set
-     * 
+     *
      * @return string|array|null Current tool choice setting
      */
     public function getToolChoice()
@@ -389,7 +386,7 @@ class LarAgent
 
         if (! empty($this->tools)) {
             $configs['parallel_tool_calls'] = $this->getParallelToolCalls();
-            
+
             $toolChoice = $this->getToolChoice();
             if ($toolChoice !== null) {
                 $configs['tool_choice'] = $toolChoice;

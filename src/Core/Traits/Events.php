@@ -11,7 +11,6 @@ trait Events
     /**
      * Event triggered before reinjecting instructions.
      *
-     * @param ChatHistoryInterface $chatHistory
      * @return bool|null
      */
     protected function beforeReinjectingInstructions(ChatHistoryInterface $chatHistory)
@@ -22,8 +21,6 @@ trait Events
     /**
      * Event triggered before sending a message. (Before adding message in chat history)
      *
-     * @param ChatHistoryInterface $history
-     * @param MessageInterface|null $message
      * @return bool|null
      */
     protected function beforeSend(ChatHistoryInterface $history, ?MessageInterface $message)
@@ -34,8 +31,6 @@ trait Events
     /**
      * Event triggered after sending a message. (After adding LLM response to Chat history)
      *
-     * @param ChatHistoryInterface $history
-     * @param MessageInterface $message
      * @return bool|null
      */
     protected function afterSend(ChatHistoryInterface $history, MessageInterface $message)
@@ -46,7 +41,6 @@ trait Events
     /**
      * Event triggered before saving chat history.
      *
-     * @param ChatHistoryInterface $history
      * @return bool|null
      */
     protected function beforeSaveHistory(ChatHistoryInterface $history)
@@ -57,8 +51,6 @@ trait Events
     /**
      * Event triggered before getting a response. (Before sending message to LLM)
      *
-     * @param ChatHistoryInterface $history
-     * @param MessageInterface|null $message
      * @return bool|null
      */
     protected function beforeResponse(ChatHistoryInterface $history, ?MessageInterface $message)
@@ -69,7 +61,6 @@ trait Events
     /**
      * Event triggered after getting a response. (After receiving message from LLM)
      *
-     * @param MessageInterface $message
      * @return bool|null
      */
     protected function afterResponse(MessageInterface $message)
@@ -80,7 +71,6 @@ trait Events
     /**
      * Event triggered before executing a tool.
      *
-     * @param ToolInterface $tool
      * @return bool|null
      */
     protected function beforeToolExecution(ToolInterface $tool)
@@ -91,8 +81,7 @@ trait Events
     /**
      * Event triggered after executing a tool.
      *
-     * @param ToolInterface $tool
-     * @param mixed $result
+     * @param  mixed  $result
      * @return bool|null
      */
     protected function afterToolExecution(ToolInterface $tool, &$result)
@@ -103,7 +92,6 @@ trait Events
     /**
      * Event triggered before structured output.
      *
-     * @param array &$response
      * @return bool|null
      */
     protected function beforeStructuredOutput(array &$response)
@@ -137,9 +125,6 @@ trait Events
 
     /**
      * Event triggered when a tool is added or removed.
-     *
-     * @param ToolInterface $tool
-     * @param bool $added
      */
     protected function onToolChange(ToolInterface $tool, bool $added = true)
     {

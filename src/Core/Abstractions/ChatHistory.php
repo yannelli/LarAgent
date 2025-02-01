@@ -126,9 +126,6 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
     /**
      * Build messages from an array of data.
      * Useful with json storage implementations.
-     * 
-     * @param array $data
-     * @return array
      */
     protected function buildMessages(array $data): array
     {
@@ -140,14 +137,13 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
     /**
      * Convert messages to an array for storage.
      * Useful with json storage implementations.
-     * 
-     * @return array
      */
     protected function toArrayForStorage(): array
     {
         if ($this->storeMeta) {
             return $this->toArrayWithMeta();
         }
+
         return $this->toArray();
     }
 }

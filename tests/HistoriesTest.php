@@ -1,14 +1,12 @@
 <?php
 
-use LarAgent\History\SessionChatHistory;
-use LarAgent\History\JsonChatHistory;
-use LarAgent\History\FileChatHistory;
-use LarAgent\History\CacheChatHistory;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
-use LarAgent\Message;
 use LarAgent\Core\Enums\Role;
+use LarAgent\History\CacheChatHistory;
+use LarAgent\History\FileChatHistory;
+use LarAgent\History\JsonChatHistory;
+use LarAgent\History\SessionChatHistory;
+use LarAgent\Message;
 
 dataset('messages', [
     Message::create(Role::SYSTEM->value, 'You are helpful assistant', ['test' => 'meta']),
@@ -24,13 +22,13 @@ it('can read and write session chat history', function ($message) {
 })->with('messages');
 
 it('can read and write json chat history', function ($message) {
-    $history = new JsonChatHistory('test_json', ['folder' => __DIR__ . '/json_storage']);
+    $history = new JsonChatHistory('test_json', ['folder' => __DIR__.'/json_storage']);
     $history->clear();
 
     $history->addMessage($message);
     $history->writeToMemory();
 
-    $newHistory = new JsonChatHistory('test_json', ['folder' => __DIR__ . '/json_storage']);
+    $newHistory = new JsonChatHistory('test_json', ['folder' => __DIR__.'/json_storage']);
 
     expect($newHistory->toArray())->toBe([$message->toArray()]);
     expect($newHistory->getLastMessage()->toArray())->toBe($message->toArray());
@@ -48,7 +46,6 @@ it('can read and write file chat history', function ($message) {
     expect($newHistory->toArray())->toBe([$message->toArray()]);
     expect($newHistory->getLastMessage()->toArray())->toBe($message->toArray());
 })->with('messages');
-
 
 it('reads and writes chat history using the default cache store', function ($message) {
     $identifier = 'test_cache';

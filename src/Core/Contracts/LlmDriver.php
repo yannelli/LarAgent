@@ -86,5 +86,4 @@ interface LlmDriver
     public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;
 
     public function toolCallsToMessage(array $toolCalls): array;
-
 }

@@ -1,14 +1,13 @@
 <?php
 
-use LarAgent\LarAgent;
 use LarAgent\History\InMemoryChatHistory;
+use LarAgent\LarAgent;
 use LarAgent\Message;
-use LarAgent\Core\Enums\Role;
 use LarAgent\Tests\Fakes\FakeLlmDriver;
 use LarAgent\Tool;
 
 it('can setup LarAgent', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory, [
         'model' => 'gpt-4o-mini',
@@ -19,7 +18,7 @@ it('can setup LarAgent', function () {
 });
 
 it('can set and get instructions', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory);
 
@@ -30,7 +29,7 @@ it('can set and get instructions', function () {
 });
 
 it('can set and get message', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory);
 
@@ -41,7 +40,7 @@ it('can set and get message', function () {
 });
 
 it('can set and get response schema', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory);
 
@@ -58,13 +57,13 @@ it('can set and get response schema', function () {
 });
 
 it('can run and get response', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory);
 
     $message = Message::user('Hello');
     $agent->withInstructions('You are a helpful assistant.')
-          ->withMessage($message);
+        ->withMessage($message);
 
     $driver->addMockResponse('stop', [
         'content' => 'Hi there!',
@@ -78,7 +77,7 @@ it('can run and get response', function () {
 });
 
 it('can run with tools', function () {
-    $driver = new FakeLlmDriver();
+    $driver = new FakeLlmDriver;
     $chatHistory = new InMemoryChatHistory('test-chat-history');
     $agent = LarAgent::setup($driver, $chatHistory);
 
@@ -97,10 +96,9 @@ it('can run with tools', function () {
     $agent->setTools([$tool])
         ->withInstructions($instructions)
         ->withMessage($userMessage);
-        
-        
+
     $agent->afterResponse(function ($agent, $message) {
-        $message->setContent($message . '. Checked at 2024-01-01');
+        $message->setContent($message.'. Checked at 2024-01-01');
     });
 
     $driver->addMockResponse('tool_calls', [

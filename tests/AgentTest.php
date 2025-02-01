@@ -1,28 +1,28 @@
 <?php
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use LarAgent\Agent;
-use LarAgent\History\InMemoryChatHistory;
-use LarAgent\Message;
 use LarAgent\Tests\Fakes\FakeLlmDriver;
 use LarAgent\Tool;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class TestAgent extends Agent
 {
-    protected $model = "gpt-4o-mini";
-    protected $history = "in_memory";
+    protected $model = 'gpt-4o-mini';
+
+    protected $history = 'in_memory';
+
     protected $driver = FakeLlmDriver::class;
 
     public $saveToolResult = null;
 
     public function instructions()
     {
-        return "You are a test agent.";
+        return 'You are a test agent.';
     }
 
     public function prompt($message)
     {
-        return $message . " Please respond appropriately.";
+        return $message.' Please respond appropriately.';
     }
 
     public function registerTools()
@@ -32,8 +32,8 @@ class TestAgent extends Agent
                 ->addProperty('input', 'string', 'Input for the tool')
                 ->setRequired('input')
                 ->setCallback(function ($input) {
-                    return 'Processed ' . $input;
-                })
+                    return 'Processed '.$input;
+                }),
         ];
     }
 
@@ -43,7 +43,7 @@ class TestAgent extends Agent
             'toolName' => 'test_tool',
             'arguments' => json_encode(['input' => 'test input']),
         ]);
-    
+
         $this->llmDriver->addMockResponse('stop', [
             'content' => 'Processed test input',
         ]);
@@ -51,7 +51,7 @@ class TestAgent extends Agent
 
     protected function afterResponse($message)
     {
-        $message->setContent($message . ". Edited via event");
+        $message->setContent($message.'. Edited via event');
     }
 
     protected function afterToolExecution($tool, &$result)
@@ -100,5 +100,5 @@ it('can handle events', function () {
     $message = $agent->lastMessage();
 
     // Check if "afterResponse" event worked
-    expect((string) $message)->toContain("Edited via event");
+    expect((string) $message)->toContain('Edited via event');
 });

@@ -85,7 +85,7 @@ abstract class LlmDriver implements LlmDriverInterface
         $this->provider = $provider;
     }
 
-    public abstract function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;
+    abstract public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;
 
-    public abstract function toolCallsToMessage(array $toolCalls): array;
+    abstract public function toolCallsToMessage(array $toolCalls): array;
 }
