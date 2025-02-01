@@ -258,7 +258,8 @@ class Agent
         return $this->chatSessionId;
     }
 
-    public function getProviderName(): string {
+    public function getProviderName(): string
+    {
         return $this->providerName;
     }
 
@@ -370,18 +371,20 @@ class Agent
         );
     }
 
-    protected function getProviderData(): ?array {
+    protected function getProviderData(): ?array
+    {
         return config("laragent.providers.{$this->provider}");
     }
-    
-    protected function setupDriverConfigs(array $providerData): void {
-        if (!isset($this->model) && isset($providerData['model'])) {
+
+    protected function setupDriverConfigs(array $providerData): void
+    {
+        if (! isset($this->model) && isset($providerData['model'])) {
             $this->model = $providerData['model'];
         }
-        if (!isset($this->maxCompletionTokens) && isset($providerData['default_max_completion_tokens'])) {
+        if (! isset($this->maxCompletionTokens) && isset($providerData['default_max_completion_tokens'])) {
             $this->maxCompletionTokens = $providerData['default_max_completion_tokens'];
         }
-        if (!isset($this->contextWindowSize) && isset($providerData['default_context_window'])) {
+        if (! isset($this->contextWindowSize) && isset($providerData['default_context_window'])) {
             $this->contextWindowSize = $providerData['default_context_window'];
         }
         if (!isset($this->storeMeta) && isset($providerData['store_meta'])) {
@@ -390,24 +393,26 @@ class Agent
         if (!isset($this->temperature) && isset($providerData['default_temperature'])) {
             $this->temperature = $providerData['default_temperature'];
         }
-        if (!isset($this->parallelToolCalls) && isset($providerData['parallel_tool_calls'])) {
+        if (! isset($this->parallelToolCalls) && isset($providerData['parallel_tool_calls'])) {
             $this->parallelToolCalls = $providerData['parallel_tool_calls'];
         }
     }
 
-    protected function initDriver($providerData): void {
+    protected function initDriver($providerData): void
+    {
         $this->llmDriver = new $this->driver([
-            "api_key" => $providerData['api_key'],
+            'api_key' => $providerData['api_key'],
             'api_url' => $providerData['api_url'] ?? null,
         ]);
     }
 
-    protected function setupProviderData(): void {
+    protected function setupProviderData(): void
+    {
         $provider = $this->getProviderData();
-        if (!isset($this->driver)) {
+        if (! isset($this->driver)) {
             $this->driver = $provider['driver'] ?? config('laragent.default_driver');
         }
-        if (!isset($this->history)) {
+        if (! isset($this->history)) {
             $this->history = $provider['chat_history'] ?? config('laragent.default_chat_history');
         }
         $this->providerName = $provider['name'] ?? '';
@@ -416,7 +421,8 @@ class Agent
         $this->initDriver($provider);
     }
 
-    protected function setupAgent(): void {
+    protected function setupAgent(): void
+    {
         $config = [
             'model' => $this->model,
         ];
@@ -491,7 +497,8 @@ class Agent
         });
     }
 
-    protected function setup(): void {
+    protected function setup(): void
+    {
         $this->setupProviderData();
         $chatHistory = $this->createChatHistory($this->getChatSessionId());
         $this->setChatHistory($chatHistory);

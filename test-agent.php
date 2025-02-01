@@ -7,6 +7,7 @@ use LarAgent\Core\Contracts\ChatHistory;
 
 function config(string $key): mixed {
     $yourApiKey = include 'openai-api-key.php';
+
     return [
         'laragent.default_driver' => LarAgent\Drivers\OpenAi\OpenAiDriver::class,
         'laragent.default_chat_history' => LarAgent\History\InMemoryChatHistory::class,
@@ -24,32 +25,34 @@ function config(string $key): mixed {
 
 class WeatherTool extends LarAgent\Tool
 {
-    protected string $name = "get_current_weather";
+    protected string $name = 'get_current_weather';
 
-    protected string $description = "Get the current weather in a given location";
+    protected string $description = 'Get the current weather in a given location';
 
     protected array $properties = [
         'location' => [
             'type' => 'string',
-            'description' => 'The city and state, e.g. San Francisco, CA'
+            'description' => 'The city and state, e.g. San Francisco, CA',
         ],
         'unit' => [
             'type' => 'string',
             'description' => 'The unit of temperature',
-            'enum' => ['celsius', 'fahrenheit']
-        ]
+            'enum' => ['celsius', 'fahrenheit'],
+        ],
     ];
 
     protected array $required = ['location'];
 
     protected array $metaData = ['sent_at' => '2024-01-01'];
 
-    public function execute(array $input): mixed {
+    public function execute(array $input): mixed
+    {
         // Call the weather API
-        return 'The weather in '.$input['location'].' is ' . rand(10, 60) . ' degrees '.$input['unit'];
+        return 'The weather in '.$input['location'].' is '.rand(10, 60).' degrees '.$input['unit'];
     }
 }
 
+<<<<<<< HEAD
 enum Unit: string {
     case CELSIUS = 'celsius';
     case FAHRENHEIT = 'fahrenheit';
@@ -117,3 +120,8 @@ echo "\n---\n";
 echo WeatherAgent::for("test_chat")->respond('Thanks for the info. What about New York? I prefer celsus');
 echo "\n---\n";
 echo WeatherAgent::for("test_chat")->respond('Where am I now?');
+=======
+echo WeatherAgent::for('test_chat')->respond('What\'s the weather like in Boston and Los Angeles? I prefer fahrenheit');
+echo "\n";
+echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York?');
+>>>>>>> 3a4da20ac494b84d4a256ccf95dfee9aebf071db

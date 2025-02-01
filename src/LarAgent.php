@@ -301,7 +301,7 @@ class LarAgent
         }
 
         // Register tools
-        if (!empty($this->tools)) {
+        if (! empty($this->tools)) {
             foreach ($this->tools as $tool) {
                 $this->driver->registerTool($tool);
             }
