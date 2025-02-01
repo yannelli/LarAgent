@@ -190,19 +190,13 @@ class WeatherAgent extends Agent
 
 You can use tools to extend the functionality of agents.
 
-```php
-$weatherAgent = new WeatherAgent();
-$weatherAgent->useTool(WeatherTool::class);
-```
+// @todo add examples of all types of tools creation and registration here
 
 ### Managing Chat History
 
-You can manage chat history by using the `ChatHistory` class.
+You can manage chat history by using agent class per key or user.
 
-```php
-$chatHistory = new RedisChatHistory();
-$chatHistory->store('Hello, how are you?');
-```
+// @todo add chat history management methods
 
 ## Advanced Usage
 
