@@ -3,15 +3,12 @@
 namespace LarAgent;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
+use LarAgent\Attributes\Tool as ToolAttribute;
 use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
+use LarAgent\Core\Contracts\LlmDriver as LlmDriverInterface;
 use LarAgent\Core\Contracts\Message as MessageInterface;
 use LarAgent\Core\DTO\AgentDTO;
-use LarAgent\LarAgent;
-use LarAgent\Message;
 use LarAgent\Core\Traits\Events;
-use LarAgent\Tool;
-use LarAgent\Attributes\Tool as ToolAttribute;
 
 /**
  * Class Agent
@@ -49,13 +46,13 @@ class Agent
     protected $driver;
 
     /** @var string */
-    protected $provider = "default";
+    protected $provider = 'default';
 
     /** @var string */
-    protected $providerName = "";
+    protected $providerName = '';
 
     // Driver configs
-    
+
     /** @var string */
     protected $model = 'gpt-4o-mini';
 
@@ -64,6 +61,7 @@ class Agent
 
     /**
      * Store message metadata with messages in chat history
+     *
      * @var bool
      */
     protected $storeMeta;
@@ -108,9 +106,8 @@ class Agent
 
     /**
      * Create an agent instance for a specific user
-     * 
-     * @param Authenticatable $user The user to create agent for
-     * @return static
+     *
+     * @param  Authenticatable  $user  The user to create agent for
      */
     public static function forUser(Authenticatable $user): static
     {
@@ -122,9 +119,8 @@ class Agent
 
     /**
      * Create an agent instance with a specific key
-     * 
-     * @param string $key The key to identify this agent instance
-     * @return static
+     *
+     * @param  string  $key  The key to identify this agent instance
      */
     public static function for(string $key): static
     {
@@ -135,9 +131,8 @@ class Agent
 
     /**
      * Set the message for the agent to process
-     * 
-     * @param string $message The message to process
-     * @return static
+     *
+     * @param  string  $message  The message to process
      */
     public function message(string $message): static
     {
@@ -148,8 +143,8 @@ class Agent
 
     /**
      * Process a message and get the agent's response
-     * 
-     * @param string|null $message Optional message to process
+     *
+     * @param  string|null  $message  Optional message to process
      * @return string|array The agent's response
      */
     public function respond(?string $message = null): string|array
@@ -159,7 +154,7 @@ class Agent
         }
 
         $this->onConversationStart();
-        
+
         $message = Message::user($this->prompt($this->message));
 
         $this->agent
@@ -173,6 +168,7 @@ class Agent
 
         $response = $this->agent->run();
         $this->onConversationEnd();
+
         return $response;
     }
 
@@ -180,7 +176,7 @@ class Agent
 
     /**
      * Get the instructions for the agent
-     * 
+     *
      * @return string The agent's instructions
      */
     public function instructions()
@@ -190,8 +186,8 @@ class Agent
 
     /**
      * Process a message before sending to the agent
-     * 
-     * @param string $message The message to process
+     *
+     * @param  string  $message  The message to process
      * @return string The processed message
      */
     public function prompt(string $message)
@@ -201,7 +197,7 @@ class Agent
 
     /**
      * Get the structured output schema if any
-     * 
+     *
      * @return array|null The response schema or null if none set
      */
     public function structuredOutput()
@@ -211,13 +207,14 @@ class Agent
 
     /**
      * Create a new chat history instance
-     * 
-     * @param string $sessionId The session ID for the chat history
+     *
+     * @param  string  $sessionId  The session ID for the chat history
      * @return ChatHistoryInterface The created chat history instance
      */
     public function createChatHistory(string $sessionId)
     {
         $historyClass = $this->builtInHistories[$this->history] ?? $this->history;
+
         return new $historyClass($sessionId, [
             'context_window' => $this->contextWindowSize,
             'store_meta' => $this->storeMeta,
@@ -226,10 +223,10 @@ class Agent
 
     /**
      * Register additional tools for the agent
-     * 
+     *
      * Override this method in child classes to register custom tools.
      * Tools should be instances of LarAgent\Tool class.
-     * 
+     *
      * Example:
      * ```php
      * public function registerTools() {
@@ -244,7 +241,7 @@ class Agent
      *     ];
      * }
      * ```
-     * 
+     *
      * @return array Array of Tool instances
      */
     public function registerTools()
@@ -254,7 +251,8 @@ class Agent
 
     // Public accessors / mutators
 
-    public function getChatSessionId(): string {
+    public function getChatSessionId(): string
+    {
         return $this->chatSessionId;
     }
 
@@ -263,10 +261,11 @@ class Agent
         return $this->providerName;
     }
 
-    public function getTools(): array {
+    public function getTools(): array
+    {
         // Get tools from $tools property (class names)
         $classTools = array_map(function ($tool) {
-            return new $tool();
+            return new $tool;
         }, $this->tools);
 
         // Get tools from registerTools method (instances)
@@ -279,20 +278,25 @@ class Agent
         return array_merge($classTools, $registeredTools, $attributeTools);
     }
 
-    public function chatHistory(): ChatHistoryInterface {
+    public function chatHistory(): ChatHistoryInterface
+    {
         return $this->chatHistory;
     }
 
-    public function setChatHistory(ChatHistoryInterface $chatHistory): static {
+    public function setChatHistory(ChatHistoryInterface $chatHistory): static
+    {
         $this->chatHistory = $chatHistory;
+
         return $this;
     }
-    
-    public function currentMessage(): ?string {
+
+    public function currentMessage(): ?string
+    {
         return $this->message;
     }
 
-    public function lastMessage(): ?MessageInterface {
+    public function lastMessage(): ?MessageInterface
+    {
         return $this->chatHistory->getLastMessage();
     }
 
@@ -301,6 +305,7 @@ class Agent
         $this->onClear();
         $this->chatHistory->clear();
         $this->chatHistory->writeToMemory();
+
         return $this;
     }
 
@@ -308,6 +313,7 @@ class Agent
     {
         $this->tools[] = $tool;
         $this->onToolChange($tool, true);
+
         return $this;
     }
 
@@ -320,6 +326,7 @@ class Agent
                 break;
             }
         }
+
         return $this;
     }
 
@@ -337,13 +344,13 @@ class Agent
             'reinjectInstructionsPer' => $this->reinjectInstructionsPer ?? null,
             'parallelToolCalls' => $this->parallelToolCalls ?? null,
             'chatSessionId' => $this->chatSessionId,
-        ], fn($value) => !is_null($value));
+        ], fn ($value) => ! is_null($value));
 
         return new AgentDTO(
             provider: $this->provider,
             providerName: $this->providerName,
             message: $this->message,
-            tools: array_map(fn(ToolInterface $tool) => $tool->getName(), $this->getTools()),
+            tools: array_map(fn (ToolInterface $tool) => $tool->getName(), $this->getTools()),
             instructions: $this->instructions,
             responseSchema: $this->responseSchema,
             configuration: [
@@ -357,12 +364,15 @@ class Agent
 
     // Helper methods
 
-    protected function setChatSessionId(string $id): static {
+    protected function setChatSessionId(string $id): static
+    {
         $this->chatSessionId = $this->buildSessionId($id);
+
         return $this;
     }
 
-    protected function buildSessionId(string $id) {
+    protected function buildSessionId(string $id)
+    {
         return sprintf(
             '%s_%s_%s',
             class_basename(static::class),
@@ -387,10 +397,10 @@ class Agent
         if (! isset($this->contextWindowSize) && isset($providerData['default_context_window'])) {
             $this->contextWindowSize = $providerData['default_context_window'];
         }
-        if (!isset($this->storeMeta) && isset($providerData['store_meta'])) {
+        if (! isset($this->storeMeta) && isset($providerData['store_meta'])) {
             $this->storeMeta = $providerData['store_meta'];
         }
-        if (!isset($this->temperature) && isset($providerData['default_temperature'])) {
+        if (! isset($this->temperature) && isset($providerData['default_temperature'])) {
             $this->temperature = $providerData['default_temperature'];
         }
         if (! isset($this->parallelToolCalls) && isset($providerData['parallel_tool_calls'])) {
@@ -439,59 +449,69 @@ class Agent
     }
 
     // @todo Highlight possibility of laravel events via documentation
-    protected function registerEvents(): void {
+    protected function registerEvents(): void
+    {
         $instance = $this;
 
         $this->agent->beforeReinjectingInstructions(function ($agent, $chatHistory) use ($instance) {
             $returnValue = $instance->beforeReinjectingInstructions($chatHistory);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->beforeSend(function ($agent, $history, $message) use ($instance) {
             $returnValue = $instance->beforeSend($history, $message);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->afterSend(function ($agent, $history, $message) use ($instance) {
             $returnValue = $instance->afterSend($history, $message);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->beforeSaveHistory(function ($agent, $history) use ($instance) {
             $returnValue = $instance->beforeSaveHistory($history);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->beforeResponse(function ($agent, $history, $message) use ($instance) {
             $returnValue = $instance->beforeResponse($history, $message);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->afterResponse(function ($agent, $message) use ($instance) {
             $returnValue = $instance->afterResponse($message);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->beforeToolExecution(function ($agent, $tool) use ($instance) {
             $returnValue = $instance->beforeToolExecution($tool);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->afterToolExecution(function ($agent, $tool, &$result) use ($instance) {
             $returnValue = $instance->afterToolExecution($tool, $result);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
 
         $this->agent->beforeStructuredOutput(function ($agent, &$response) use ($instance) {
             $returnValue = $instance->beforeStructuredOutput($response);
+
             // Explicitly check for false
             return $returnValue === false ? false : true;
         });
@@ -507,7 +527,6 @@ class Agent
     }
 
     // @todo Implement [#tool("description of tool")] attribute
-    
 
     /**
      * Builds tools from methods annotated with #[Tool] attribute
@@ -523,7 +542,7 @@ class Agent
     {
         $tools = [];
         $reflection = new \ReflectionClass($this);
-        
+
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $attributes = $method->getAttributes(ToolAttribute::class);
             if (empty($attributes)) {
@@ -547,14 +566,14 @@ class Agent
                         isset($toolAttribute->parameterDescriptions[$param->getName()]) ? $toolAttribute->parameterDescriptions[$param->getName()] : '',
                         isset($AiType['enum']) ? $AiType['enum'] : []
                     );
-                    if (!$param->isOptional()) {
+                    if (! $param->isOptional()) {
                         $tool->setRequired($param->getName());
                     }
                 }
 
                 $instance = $this;
                 // Bind the method to the tool, handling both static and instance methods
-                $tool->setCallback($method->isStatic() 
+                $tool->setCallback($method->isStatic()
                     ? [static::class, $method->getName()]
                     : [$this, $method->getName()]
                 );
@@ -565,34 +584,36 @@ class Agent
         return $tools;
     }
 
-    protected function convertToOpenAIType($type) {
+    protected function convertToOpenAIType($type)
+    {
 
         if ($type instanceof \ReflectionEnum || (is_string($type) && enum_exists($type))) {
             $enumClass = is_string($type) ? $type : $type->getName();
+
             return [
                 'type' => 'string',
                 'enum' => [
-                    'values' => array_map(fn($case) => $case->value, $enumClass::cases()),
-                    'enumClass' => $enumClass // Store the enum class name for conversion
+                    'values' => array_map(fn ($case) => $case->value, $enumClass::cases()),
+                    'enumClass' => $enumClass, // Store the enum class name for conversion
                 ],
             ];
         }
 
-        switch($type) {
-            case "string":
-                return "string";
-            case "int":
-                return "integer";
-            case "float":
-                return "number";
-            case "bool":
-                return "boolean";
-            case "array":
-                return "array";
-            case "object":
-                return "object";
+        switch ($type) {
+            case 'string':
+                return 'string';
+            case 'int':
+                return 'integer';
+            case 'float':
+                return 'number';
+            case 'bool':
+                return 'boolean';
+            case 'array':
+                return 'array';
+            case 'object':
+                return 'object';
             default:
-                return "string";
+                return 'string';
         }
     }
 }

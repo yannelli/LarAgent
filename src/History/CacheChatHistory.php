@@ -2,9 +2,9 @@
 
 namespace LarAgent\History;
 
+use Illuminate\Support\Facades\Cache;
 use LarAgent\Core\Abstractions\ChatHistory;
 use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Illuminate\Support\Facades\Cache;
 
 class CacheChatHistory extends ChatHistory implements ChatHistoryInterface
 {

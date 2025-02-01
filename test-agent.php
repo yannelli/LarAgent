@@ -3,9 +3,9 @@
 require_once __DIR__.'/vendor/autoload.php';
 
 use LarAgent\Attributes\Tool;
-use LarAgent\Core\Contracts\ChatHistory;
 
-function config(string $key): mixed {
+function config(string $key): mixed
+{
     $yourApiKey = include 'openai-api-key.php';
 
     return [
@@ -20,8 +20,6 @@ function config(string $key): mixed {
         ],
     ][$key];
 }
-
-
 
 class WeatherTool extends LarAgent\Tool
 {
@@ -52,70 +50,78 @@ class WeatherTool extends LarAgent\Tool
     }
 }
 
-enum Unit: string {
+enum Unit: string
+{
     case CELSIUS = 'celsius';
     case FAHRENHEIT = 'fahrenheit';
 }
 
 class WeatherAgent extends LarAgent\Agent
 {
-    protected $model = "gpt-4o-mini";
+    protected $model = 'gpt-4o-mini';
 
     // Tool by classes
     protected $tools = [
         // WeatherTool::class
     ];
 
-    protected $history = "in_memory";
+    protected $history = 'in_memory';
 
-    public function instructions() {
+    public function instructions()
+    {
         $user = ['name' => 'John', 'age' => 25];
-        return 
+
+        return
             "You are weather agent holding info about weather in any city.
             Always use User's name while responding.
-            User info: " . json_encode($user);
+            User info: ".json_encode($user);
     }
 
-    public function prompt($message) {
-        return $message . ". Always check if I have other questions.";
+    public function prompt($message)
+    {
+        return $message.'. Always check if I have other questions.';
         // return view('ai.prompts.weather', ['message' => $message])->render();
     }
 
     // Define history with custom options or using custom history class
-    public function createChatHistory($name) {
+    public function createChatHistory($name)
+    {
         return new LarAgent\History\JsonChatHistory($name, ['folder' => __DIR__.'/json_History']);
     }
 
-    public function registerTools() {
+    public function registerTools()
+    {
         $user = ['location' => 'Tbilisi'];
+
         return [
-            \LarAgent\Tool::create("user_location", "Returns user's current location")
-                 ->setCallback(function () use ($user) {
-                      return $user["location"];
-                 }),
+            \LarAgent\Tool::create('user_location', "Returns user's current location")
+                ->setCallback(function () use ($user) {
+                    return $user['location'];
+                }),
         ];
     }
 
-
     // Example of a tool defined as a method with optional and required parameters
-    #[Tool("Get the current weather in a given location")]
-    public function weatherTool($location, $unit = 'celsius') {
-        return 'The weather in '.$location.' is ' . "20" . ' degrees '.$unit;
+    #[Tool('Get the current weather in a given location')]
+    public function weatherTool($location, $unit = 'celsius')
+    {
+        return 'The weather in '.$location.' is '.'20'.' degrees '.$unit;
     }
 
     // @todo implement metadata support for tool attribute
 
     // Example of using static method as tool and all it's features
     // Tool Description, property descriptions, enums, required properties
-    #[Tool("Get the current weather in a given location", ['unit' => "Unit of temperature"])]
-    public static function weatherToolForNewYork(Unit $unit) {
-        return 'The weather in New York is ' . "50" . ' degrees '. $unit->value;
+    #[Tool('Get the current weather in a given location', ['unit' => 'Unit of temperature'])]
+    public static function weatherToolForNewYork(Unit $unit)
+    {
+        return 'The weather in New York is '.'50'.' degrees '.$unit->value;
     }
 }
 
-echo WeatherAgent::for("test_chat")->respond('What\'s the weather like in Boston and Los Angeles? I prefer fahrenheit');
+echo WeatherAgent::for('test_chat')->respond('What\'s the weather like in Boston and Los Angeles? I prefer fahrenheit');
 echo "\n---\n";
 // Using "celsus" instead of "celsius" to check correct pick of enum value
-echo WeatherAgent::for("test_chat")->respond('Thanks for the info. What about New York? I prefer celsus');
+echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York? I prefer celsus');
 echo "\n---\n";
-echo WeatherAgent::for("test_chat")->respond('Where am I now?');
+echo WeatherAgent::for('test_chat')->respond('Where am I now?');

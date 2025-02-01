@@ -2,13 +2,14 @@
 
 namespace LarAgent\History;
 
+use Illuminate\Support\Facades\Storage;
 use LarAgent\Core\Abstractions\ChatHistory;
 use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
-use Illuminate\Support\Facades\Storage;
 
 class FileChatHistory extends ChatHistory implements ChatHistoryInterface
 {
     protected string $disk;   // The storage disk to use
+
     protected string $folder; // The folder path to store files
 
     public function __construct(string $name, array $options = [])
@@ -48,7 +49,7 @@ class FileChatHistory extends ChatHistory implements ChatHistoryInterface
         try {
             // Create directory if it doesn't exist
             $this->createFolderIfNotExists();
-            
+
             // Write messages to the file
             Storage::disk($this->disk)->put($filePath, json_encode($this->toArrayForStorage(), JSON_PRETTY_PRINT));
         } catch (\Exception $e) {
@@ -60,7 +61,7 @@ class FileChatHistory extends ChatHistory implements ChatHistoryInterface
     {
         $directory = $this->folder;
 
-        if (!Storage::disk($this->disk)->exists($directory)) {
+        if (! Storage::disk($this->disk)->exists($directory)) {
             Storage::disk($this->disk)->makeDirectory($directory);
         }
     }
@@ -74,6 +75,6 @@ class FileChatHistory extends ChatHistory implements ChatHistoryInterface
 
     protected function getFullPath(): string
     {
-        return $this->folder . '/' . $this->getSafeName() . '.json';
+        return $this->folder.'/'.$this->getSafeName().'.json';
     }
 }
