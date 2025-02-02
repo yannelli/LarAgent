@@ -34,6 +34,9 @@ LarAgent brings the power of AI agents to your Laravel projects with an elegant,
   - [Creating an Agent](#creating-an-agent)
   - [Using Tools](#using-tools)
   - [Managing Chat History](#managing-chat-history)
+- [Commands](#commands)
+  - [Creating an Agent](#creating-an-agent-1)
+  - [Interactive Chat](#interactive-chat)
 - [Advanced Usage](#advanced-usage)
   - [Custom Agents](#custom-agents)
   - [Custom Tools](#custom-tools)
@@ -143,7 +146,6 @@ Structured output is used to define the format (JSON Schema) of the output gener
 
 ### Usage in and outside of Laravel
 
-// @todo add agent creation command here
 // @todo add link to usage out of laravel documentation
 
 
@@ -198,8 +200,37 @@ You can manage chat history by using agent class per key or user.
 
 // @todo add chat history management methods
 
-## Advanced Usage
+## Commands
 
+### Creating an Agent
+
+You can quickly create a new agent using the `make:agent` command:
+
+```bash
+php artisan make:agent WeatherAgent
+```
+
+This will create a new agent class in your `app/AiAgents` directory with the basic structure and methods needed to get started.
+
+### Interactive Chat
+
+You can start an interactive chat session with any of your agents using the `agent:chat` command:
+
+```bash
+# Start a chat with default history name
+php artisan agent:chat WeatherAgent
+
+# Start a chat with a specific history name
+php artisan agent:chat WeatherAgent --history=weather_chat_1
+```
+
+The chat session allows you to:
+- Send messages to your agent
+- Get responses in real-time
+- Use any tools configured for the agent
+- Type 'exit' to end the chat session
+
+## Advanced Usage
 
 ### Ai agents as Tools
 

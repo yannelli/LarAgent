@@ -2,7 +2,8 @@
 
 namespace LarAgent;
 
-use LarAgent\Commands\LarAgentCommand;
+use LarAgent\Commands\MakeAgentCommand;
+use LarAgent\Commands\AgentChatCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,6 +19,9 @@ class LarAgentServiceProvider extends PackageServiceProvider
         $package
             ->name('laragent')
             ->hasConfigFile()
-            ->hasCommand(LarAgentCommand::class);
+            ->hasCommands([
+                MakeAgentCommand::class,
+                AgentChatCommand::class
+            ]);
     }
 }
