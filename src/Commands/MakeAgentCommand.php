@@ -3,7 +3,6 @@
 namespace LarAgent\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class MakeAgentCommand extends Command
 {
@@ -19,14 +18,15 @@ class MakeAgentCommand extends Command
 
         if (file_exists($path)) {
             $this->error('Agent already exists: '.$name);
+
             return 1;
         }
 
         $stub = file_get_contents(__DIR__.'/stubs/agent.stub');
-        
+
         $stub = str_replace('{{ class }}', $name, $stub);
 
-        if (!is_dir(dirname($path))) {
+        if (! is_dir(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
@@ -34,7 +34,7 @@ class MakeAgentCommand extends Command
 
         $this->info('Agent created successfully: '.$name);
         $this->line('Location: '.$path);
-        
+
         return 0;
     }
 }

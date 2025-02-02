@@ -1,12 +1,10 @@
 <?php
 
-use LarAgent\Commands\AgentChatCommand;
 use LarAgent\Agent;
-use LarAgent\Tests\Fakes\FakeLlmDriver;
 
 beforeEach(function () {
     // Create a mock agent class file
-    if (!is_dir(app_path('AiAgents'))) {
+    if (! is_dir(app_path('AiAgents'))) {
         mkdir(app_path('AiAgents'), 0755, true);
     }
 
@@ -46,7 +44,7 @@ class TestAgent extends Agent
 PHP;
 
     file_put_contents(app_path('AiAgents/TestAgent.php'), $agentContent);
-    
+
     // Make sure the autoloader can find our test agent
     require_once app_path('AiAgents/TestAgent.php');
 });
@@ -56,7 +54,7 @@ afterEach(function () {
     if (file_exists(app_path('AiAgents/TestAgent.php'))) {
         unlink(app_path('AiAgents/TestAgent.php'));
     }
-    
+
     if (is_dir(app_path('AiAgents')) && count(scandir(app_path('AiAgents'))) <= 2) {
         rmdir(app_path('AiAgents'));
     }
@@ -79,7 +77,7 @@ test('it can start chat with existing agent', function () {
 test('it uses provided history name', function () {
     $this->artisan('agent:chat', [
         'agent' => 'TestAgent',
-        '--history' => 'test_history'
+        '--history' => 'test_history',
     ])
         ->expectsOutput('Using history: test_history')
         ->expectsQuestion('You', 'exit')
