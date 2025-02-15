@@ -7,6 +7,10 @@
 
 The **easiest** way to **create** and **maintain** AI agents in your Laravel projects.
 
+Jump to [Table of Contents](#table-of-contents)
+
+_Need to use LarAgent outside of Laravel? Check out this [Docs](https://github.com/MaestroError/LarAgent/blob/main/LARAGENT.md)._
+
 ## Introduction
 
 LarAgent brings the power of AI agents to your Laravel projects with an elegant syntax. Create, extend, and manage AI agents with ease while maintaining Laravel's fluent API design patterns.
@@ -102,7 +106,6 @@ YourAgentName::for("custom_history_name")->respond($message);
 
 Let's find out more with [documentation](#table-of-contents) below 👍
 
-_Need to use LarAgent outside of Laravel? Check out this [Docs](https://github.com/MaestroError/LarAgent/blob/main/LARAGENT.md)._
 
 ## Features
 
@@ -822,14 +825,13 @@ Check out the [Docs](https://github.com/MaestroError/LarAgent/blob/main/LARAGENT
 
 ## Events
 
-@todo usage examples for short and chainable versions
-@todo image input example
-
+@todo list of event
 
 ### Using Events
 
 @todo Descriptions for driver and agent specific events
 
+@todo usage examples
 
 ## Commands
 
@@ -884,7 +886,77 @@ You can create tools which calls another agent and bind the result to the agent 
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+We welcome contributions to LarAgent! Whether it's improving documentation, fixing bugs, or adding new features, your help is appreciated. Here's how you can contribute:
+
+### Development Setup
+
+1. Fork the repository
+2. Clone your fork:
+```bash
+git clone https://github.com/YOUR_USERNAME/LarAgent.git
+cd LarAgent
+```
+3. Install dependencies:
+```bash
+composer install
+```
+4. Create a new branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### Guidelines
+
+1. **Code Style**
+   - Use type hints and return types where possible
+   - Add PHPDoc blocks for classes and methods
+   - Keep methods focused and concise
+
+2. **Testing**
+   - Add tests for new features
+   - Ensure all tests pass before submitting:
+   ```bash
+   composer test
+   ```
+   - Maintain or improve code coverage
+
+3. **Documentation**
+   - Update README.md for significant changes
+   - Add PHPDoc blocks for new classes and methods
+   - Include examples for new features
+
+4. **Commits**
+   - Use clear, descriptive commit messages
+   - Reference issues and pull requests
+   - Keep commits focused and atomic
+
+### Pull Request Process
+
+1. Update your fork with the latest changes from main:
+```bash
+git remote add upstream https://github.com/MaestroError/LarAgent.git
+git fetch upstream
+git rebase upstream/main
+```
+
+2. Push your changes:
+```bash
+git push origin feature/your-feature-name
+```
+
+3. Create a Pull Request with:
+   - Clear title and description
+   - List of changes and impact
+   - Any breaking changes highlighted
+   - Screenshots/examples if relevant
+
+### Getting Help
+
+- Open an issue for bugs or feature requests
+- Join discussions in existing issues (@todo add discord channel invite link)
+- Reach out to maintainers for guidance
+
+We aim to review all pull requests within a 2 weeks. Thank you for contributing to LarAgent!
 
 ## Testing
 
@@ -907,4 +979,4 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 ## Roadmap
 
-Please see [ROADMAP](ROADMAP.md) for more information on the future development of LarAgent.
+Please see [Planned](#planned) for more information on the future development of LarAgent.

@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) maestroerror <revaz.gh@gmail.com>
+Copyright (c) Revaz Ghambarashvili (maestroerror) <revaz.gh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
