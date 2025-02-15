@@ -17,19 +17,19 @@ class UserMessage extends Message implements MessageInterface
     {
         $content = $this->getContent();
         $imageArray = [
-            "type" => "image_url",
-            "image_url" => [
-                "url" => $imageUrl
-            ]
+            'type' => 'image_url',
+            'image_url' => [
+                'url' => $imageUrl,
+            ],
         ];
 
         if (is_string($content)) {
             $this->setContent([
                 [
-                    "type" => "text",
-                    "text" => $content
+                    'type' => 'text',
+                    'text' => $content,
                 ],
-                [...$imageArray]
+                [...$imageArray],
             ]);
         }
 

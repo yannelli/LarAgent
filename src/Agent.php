@@ -160,7 +160,7 @@ class Agent
 
         $message = Message::user($this->prompt($this->message));
 
-        if (!empty($this->images)) {
+        if (! empty($this->images)) {
             foreach ($this->images as $imageUrl) {
                 $message = $message->withImage($imageUrl);
             }
@@ -342,6 +342,7 @@ class Agent
     public function withImages(array $imageUrls): static
     {
         $this->images = $imageUrls;
+
         return $this;
     }
 
@@ -451,7 +452,8 @@ class Agent
         $this->agent = LarAgent::setup($this->llmDriver, $this->chatHistory, $config);
     }
 
-    protected function buildConfigsForLaragent() {
+    protected function buildConfigsForLaragent()
+    {
         $config = [
             'model' => $this->model,
         ];
@@ -464,6 +466,7 @@ class Agent
         if (isset($this->parallelToolCalls)) {
             $config['parallel_tool_calls'] = $this->parallelToolCalls;
         }
+
         return $config;
     }
 
