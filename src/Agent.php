@@ -346,6 +346,13 @@ class Agent
         return $this;
     }
 
+    public function temperature(float $temp): static
+    {
+        $this->temperature = $temp;
+
+        return $this;
+    }
+
     /**
      * Convert Agent to DTO
      * // @todo mention DTO in the documentation as state for events
