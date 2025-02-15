@@ -13,6 +13,7 @@ function config(string $key): mixed
         'laragent.default_chat_history' => LarAgent\History\InMemoryChatHistory::class,
         'laragent.providers.default' => [
             'name' => 'openai',
+            'model' => 'gpt-4o',
             'api_key' => $yourApiKey,
             'default_context_window' => 50000,
             'default_max_completion_tokens' => 100,
@@ -126,4 +127,4 @@ echo "\n---\n";
 // Using "celsus" instead of "celsius" to check correct pick of enum value
 echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York? I prefer celsus');
 echo "\n---\n";
-echo WeatherAgent::for('test_chat')->respond('Where am I now?');
+echo WeatherAgent::for('test_chat')->message('Where am I now?')->respond();

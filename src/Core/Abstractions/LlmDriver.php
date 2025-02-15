@@ -16,7 +16,7 @@ abstract class LlmDriver implements LlmDriverInterface
 
     protected array $tools = [];
 
-    protected array $provider;
+    protected array $settings;
 
     public function registerTool(ToolInterface $tool): self
     {
@@ -75,14 +75,14 @@ abstract class LlmDriver implements LlmDriverInterface
         return ! empty($this->getResponseSchema());
     }
 
-    public function getProviderData(): array
+    public function getSettings(): array
     {
-        return $this->provider;
+        return $this->settings;
     }
 
-    public function __construct(array $provider = [])
+    public function __construct(array $settings = [])
     {
-        $this->provider = $provider;
+        $this->settings = $settings;
     }
 
     abstract public function toolResultToMessage(ToolCallInterface $toolCall, mixed $result): array;

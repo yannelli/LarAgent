@@ -16,6 +16,7 @@ abstract class Tool implements ToolInterface
 
     protected array $metaData = [];
 
+
     public function __construct(string $name, string $description, $metaData = [])
     {
         $this->name = $name;
@@ -93,8 +94,7 @@ abstract class Tool implements ToolInterface
         ];
     }
 
-    protected function resolveEnum(array $enum, string $name): array
-    {
+    protected function resolveEnum(array $enum, string $name): array {
         return $enum;
     }
 

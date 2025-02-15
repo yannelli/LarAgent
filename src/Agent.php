@@ -90,6 +90,9 @@ class Agent
         'json' => \LarAgent\History\JsonChatHistory::class,
     ];
 
+    /** @var array */
+    protected $images = [];
+
     public function __construct($key)
     {
         $this->setChatSessionId($key);
@@ -156,6 +159,12 @@ class Agent
         $this->onConversationStart();
 
         $message = Message::user($this->prompt($this->message));
+
+        if (!empty($this->images)) {
+            foreach ($this->images as $imageUrl) {
+                $message = $message->withImage($imageUrl);
+            }
+        }
 
         $this->agent
             ->withInstructions($this->instructions())
@@ -330,6 +339,12 @@ class Agent
         return $this;
     }
 
+    public function withImages(array $imageUrls): static
+    {
+        $this->images = $imageUrls;
+        return $this;
+    }
+
     /**
      * Convert Agent to DTO
      * // @todo mention DTO in the documentation as state for events
@@ -408,12 +423,9 @@ class Agent
         }
     }
 
-    protected function initDriver($providerData): void
+    protected function initDriver($settings): void
     {
-        $this->llmDriver = new $this->driver([
-            'api_key' => $providerData['api_key'],
-            'api_url' => $providerData['api_url'] ?? null,
-        ]);
+        $this->llmDriver = new $this->driver($settings);
     }
 
     protected function setupProviderData(): void
@@ -428,11 +440,18 @@ class Agent
         $this->providerName = $provider['name'] ?? '';
         $this->setupDriverConfigs($provider);
 
-        $this->initDriver($provider);
+        $settings = array_merge($provider, $this->buildConfigsForLaragent());
+
+        $this->initDriver($settings);
     }
 
     protected function setupAgent(): void
     {
+        $config = $this->buildConfigsForLaragent();
+        $this->agent = LarAgent::setup($this->llmDriver, $this->chatHistory, $config);
+    }
+
+    protected function buildConfigsForLaragent() {
         $config = [
             'model' => $this->model,
         ];
@@ -445,7 +464,7 @@ class Agent
         if (isset($this->parallelToolCalls)) {
             $config['parallel_tool_calls'] = $this->parallelToolCalls;
         }
-        $this->agent = LarAgent::setup($this->llmDriver, $this->chatHistory, $config);
+        return $config;
     }
 
     // @todo Highlight possibility of laravel events via documentation

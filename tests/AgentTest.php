@@ -43,11 +43,12 @@ class TestAgent extends Agent
             'toolName' => 'test_tool',
             'arguments' => json_encode(['input' => 'test input']),
         ]);
-
+        
         $this->llmDriver->addMockResponse('stop', [
             'content' => 'Processed test input',
         ]);
     }
+
 
     protected function afterResponse($message)
     {
@@ -101,4 +102,35 @@ it('can handle events', function () {
 
     // Check if "afterResponse" event worked
     expect((string) $message)->toContain('Edited via event');
+});
+
+it('can handle image urls in response', function () {
+    $agent = new TestAgent('test_session');
+    $agent->withImages([
+        'http://example.com/image1.jpg',
+        'http://example.com/image2.jpg'
+    ]);
+    
+    $message = $agent->message('Test message')->respond();
+    
+    expect($message)->toBe('Processed test input. Edited via event');
+    
+    // Get the last message from chat history to verify images
+    $messages = $agent->chatHistory()->getMessages();
+    $firstUserMessage = $messages[1];
+    
+    expect($firstUserMessage->getContent())->toBeArray()
+        ->and($firstUserMessage->getContent())->toHaveCount(3) // text + 2 images
+        ->and($firstUserMessage->getContent()[0])->toMatchArray([
+            'type' => 'text',
+            'text' => 'Test message Please respond appropriately.'
+        ])
+        ->and($firstUserMessage->getContent()[1])->toMatchArray([
+            'type' => 'image_url',
+            'image_url' => ['url' => 'http://example.com/image1.jpg']
+        ])
+        ->and($firstUserMessage->getContent()[2])->toMatchArray([
+            'type' => 'image_url',
+            'image_url' => ['url' => 'http://example.com/image2.jpg']
+        ]);
 });

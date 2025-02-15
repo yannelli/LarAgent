@@ -75,11 +75,12 @@ interface LlmDriver
     public function getLastResponse(): ?array;
 
     /**
-     * Get the provider data.
+     * Get the provider data merged with the model defined settings.
+     * Model settings override provider settings.
      *
-     * @return array The provider data.
+     * @return array The settings.
      */
-    public function getProviderData(): array;
+    public function getSettings(): array;
 
     public function structuredOutputEnabled(): bool;
 
