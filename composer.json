@@ -67,10 +67,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Maestroerror\\LarAgent\\LarAgentServiceProvider"
+                "LarAgent\\LarAgentServiceProvider"
             ],
             "aliases": {
-                "LarAgent": "Maestroerror\\LarAgent\\Facades\\LarAgent"
+                "LarAgent": "LarAgent\\Facades\\LarAgent"
             }
         }
     },
