@@ -108,7 +108,7 @@ trait Events
     }
 
     /**
-     * Event triggered when a new conversation starts.
+     * Event triggered at start of `respond` method.
      */
     protected function onConversationStart()
     {
@@ -116,9 +116,9 @@ trait Events
     }
 
     /**
-     * Event triggered when a conversation ends.
+     * Event triggered at end of `respond` method.
      */
-    protected function onConversationEnd()
+    protected function onConversationEnd(MessageInterface|array|null $message)
     {
         // Triggered when a conversation ends
     }

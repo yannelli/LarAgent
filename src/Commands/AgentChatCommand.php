@@ -11,19 +11,6 @@ class AgentChatCommand extends Command
 
     protected $description = 'Start an interactive chat session with an agent';
 
-    protected function logError($message)
-    {
-        $logPath = 'logs/agent-chat-errors.log';
-        $timestamp = date('Y-m-d H:i:s');
-        $logMessage = "[{$timestamp}] {$message}\n";
-
-        if (! is_dir(dirname($logPath))) {
-            mkdir(dirname($logPath), 0755, true);
-        }
-
-        file_put_contents($logPath, $logMessage, FILE_APPEND);
-    }
-
     public function handle()
     {
         $agentName = $this->argument('agent');
@@ -35,7 +22,6 @@ class AgentChatCommand extends Command
             $agentClass = "\\App\\Agents\\{$agentName}";
             if (! class_exists($agentClass)) {
                 $this->error("Agent not found: {$agentName}");
-                $this->logError("Agent not found: {$agentName}");
 
                 return 1;
             }
@@ -62,7 +48,6 @@ class AgentChatCommand extends Command
                 $this->line($response."\n");
             } catch (\Exception $e) {
                 $this->error('Error: '.$e->getMessage());
-                $this->logError("Error in {$agentName} response: ".$e->getMessage()."\nStack trace:\n".$e->getTraceAsString());
 
                 return 1;
             }

@@ -176,7 +176,7 @@ class Agent
         }
 
         $response = $this->agent->run();
-        $this->onConversationEnd();
+        $this->onConversationEnd($response);
 
         return $response;
     }
