@@ -171,7 +171,9 @@ Stay tuned! We're constantly working on making LarAgent the most versatile AI ag
   - [Structured Output](#structured-output)
   - [Usage without Laravel](#usage-in-and-outside-of-laravel)
 - [Events](#events)
-  - [Using Events](#using-events)
+  - [Agent](#agent)
+  - [Engine](#engine)
+  - [Using Laravel events with hooks](#using-laravel-events-with-hooks)
 - [Commands](#commands)
   - [Creating an Agent](#creating-an-agent-1)
   - [Interactive Chat](#interactive-chat)
@@ -309,7 +311,7 @@ protected $model = 'gpt-4o-mini';
 /** @var int - Set the maximum number of tokens in the completion */
 protected $maxCompletionTokens;
 
-/** @var float - Control response creativity (0.0 for focused, 1.0 for creative) */
+/** @var float - Control response creativity (0.0 for focused, 2.0 for creative) */
 protected $temperature;
 
 /** @var string|null - Current message being processed */
@@ -498,7 +500,7 @@ protected $tools = [];
 There are three ways to create and register tools in your agent:
 
 1. **Using the registerTools Method**
-This method allows you to programmatically create and register tools:
+This method allows you to programmatically create and register tools using the `LarAgent\Tool` class:
 
 ```php
 use LarAgent\Tool;
@@ -506,6 +508,7 @@ use LarAgent\Tool;
 public function registerTools() 
 {
     return [
+        $user = auth()->user();
         Tool::create("user_location", "Returns user's current location")
              ->setCallback(function () use ($user) {
                   return $user->location()->city;
@@ -574,7 +577,7 @@ protected $tools = [
 ];
 ```
 
-It's recommended to use tool classes with any complex workflows as they provide more control over the tool's behavior, maintainability and reusability (can be used in different agents).
+It's recommended to use tool classes with any complex workflows as they provide: more control over the tool's behavior, maintainability and reusability (can be easily used in different agents).
 
 _Tool creation command coming soon_
 
@@ -633,20 +636,23 @@ LarAgent\History\JsonChatHistory::class      // Stores in JSON files
 
 #### Chat History Configuration
 
-Chat histories can be configured using these properties.
+Chat histories can be configured using these properties in your Agent class.
 
+**reinjectInstructionsPer**
 ```php
 /** @var int - Number of messages after which to reinject the agent's instructions */
 protected $reinjectInstructionsPer;
 ```
 Instructions are always injected at the beginning of the chat history, `$reinjectInstructionsPer` defined when to reinject the instructions. By default it is set to `0` (disabled).
 
+**contextWindowSize**
 ```php
 /** @var int - Maximum number of tokens to keep in context window */
 protected $contextWindowSize;
 ```
 After the context window is exceeded, the oldest messages are removed until the context window is satisfied or the limit is reached. You can implement custom logic for the context window management using events and chat history instance inside your agent.
 
+**storeMeta**
 ```php
 /** @var bool - Whether to store additional metadata with messages */
 protected $storeMeta;
@@ -655,9 +661,11 @@ Some LLM drivers such as OpenAI provide additional data with the response, such 
 
 #### Creating Custom Chat History
 
-You can create your own chat history implementation by implementing the `ChatHistoryInterface` and extending the `LarAgent\Core\Abstractions\ChatHistory` abstract class.
+You can create your own chat history by implementing the `ChatHistoryInterface` and extending the `LarAgent\Core\Abstractions\ChatHistory` abstract class.
 
-There are two ways to register your chat history into an agent. If you use standard construction only with `$name` parameter, you can define it in by class in `$history` property or provider configuration:
+Check example implementations in [src/History](https://github.com/MaestroError/LarAgent/tree/main/src/History)
+
+There are two ways to register your custom chat history into an agent. If you use standard constructor only with `$name` parameter, you can define it by class in `$history` property or provider configuration:
 
 **Agent Class**
 ```php
@@ -824,13 +832,379 @@ Check out the [Docs](https://github.com/MaestroError/LarAgent/blob/main/LARAGENT
 
 ## Events
 
-@todo list of event
+LarAgent provides a comprehensive event system that allows you to hook into various stages of the agent's lifecycle and conversation flow. The event system is divided into two main types of hooks:
 
-### Using Events
+1. **Agent Hooks**: These hooks are focused on the agent's lifecycle events such as initialization, conversation flow, and termination. They are perfect for setting up agent-specific configurations, handling conversation state, and managing cleanup operations.
 
-@todo Descriptions for driver and agent specific events
+2. **Engine Hooks**: These hooks dive deeper into the conversation processing pipeline, allowing you to intercept and modify the behavior at crucial points such as message handling, tool execution, and response processing. Each engine hook returns a boolean value to control the flow of execution.
 
-@todo usage examples
+**Nearly every aspect of LarAgent is hookable**, giving you fine-grained control over the agent's behavior. You can intercept and modify:
+- Agent lifecycle events
+- Message processing
+- Tool execution
+- Chat history management
+- Response handling
+- Structured output processing
+
+### Table of Contents
+
+- [Agent](#agent)
+    - [onInitialize](#oninitialize) - Agent initialization
+    - [onConversationStart](#onconversationstart) - New conversation step started
+    - [onConversationEnd](#onconversationend) - Conversation step completed
+    - [onToolChange](#ontoolchange) - Tool added or removed
+    - [onClear](#onclear) - Chat history cleared
+    - [onTerminate](#onterminate) - Agent termination
+- [Engine](#engine)
+    - [beforeReinjectingInstructions](#beforereinjectinginstructions) - Before system instructions reinjection
+    - [beforeSend & afterSend](#beforesend--aftersend) - Message handling
+    - [beforeSaveHistory](#beforesavehistory) - Chat history persistence
+    - [beforeResponse / afterResponse](#beforeresponse--afterresponse) - LLM interaction
+    - [beforeToolExecution / afterToolExecution](#beforetoolexecution--aftertoolexecution) - Tool execution
+    - [beforeStructuredOutput](#beforestructuredoutput) - Structured output processing
+- [Using Laravel events with hooks](#using-laravel-events-with-hooks)
+
+### Agent
+
+The Agent class provides several hooks that allow you to tap into various points of the agent's lifecycle. Each hook can be overridden in your agent implementation. 
+
+You can find an example implementation for each hook below.
+
+
+#### onInitialize
+
+The `onInitialize` hook is called when the agent is fully initialized. This is the perfect place to set up any initial state or configurations your agent needs. For example, use logic to set temperature dynamically based on the user type:
+
+```php
+protected function onInitialize()
+{
+    if (auth()->check() && auth()->user()->prefersCreative()) {
+        $this->temperature(1.4);
+    }
+}
+```
+
+#### onConversationStart
+
+This hook is triggered at the beginning of each `respond` method call, signaling the start of a new step  in conversation. Use this to prepare conversation-specific resources or logging.
+
+```php
+// Log agent class and message
+protected function onConversationStart()
+{
+    Log::info(
+        'Starting new conversation', 
+        [
+            'agent' => self::class,
+            'message' => $this->currentMessage()
+        ]
+    );
+}
+```
+
+#### onConversationEnd
+
+Called at the end of each `respond` method, this hook allows you to perform cleanup, logging or any other logic your application might need after a conversation ends.
+
+```php
+/** @param MessageInterface|array|null $message */
+protected function onConversationEnd($message)
+{
+    // Clean the history
+    $this->clear();
+    // Save the last response
+    DB::table('chat_histories')->insert(
+        [
+            'chat_session_id' => $this->chatHistory()->getIdentifier(),
+            'message' => $message,
+        ]
+    );
+}
+```
+
+#### onToolChange
+
+This hook is triggered whenever a tool is added to or removed from the agent. It receives the tool instance and a boolean indicating whether the tool was added (`true`) or removed (`false`).
+
+```php
+/**
+ * @param ToolInterface $tool
+ * @param bool $added
+ */
+protected function onToolChange($tool, $added = true)
+{
+    // If 'my_tool' tool is added
+    if($added && $tool->getName() == 'my_tool') {
+        // Update metadata
+        $newMetaData = ['using_in' => self::class, ...$tool->getMetaData()];
+        $tool->setMetaData($newMetaData);
+    }
+}
+```
+
+#### onClear
+
+Triggered before the agent's chat history is cleared. Use this hook to perform any necessary logic before the chat history is cleared.
+
+```php
+protected function onClear()
+{
+    // Backup chat history
+    file_put_contents('backup.json', json_encode($this->chatHistory()->toArrayWithMeta()));
+}
+```
+
+#### onTerminate
+
+This hook is called when the agent is being terminated. It's the ideal place to perform final cleanup, save state, or close connections.
+
+```php
+protected function onTerminate()
+{
+    Log::info('Agent terminated successfully');
+}
+```
+
+### Engine
+
+The Engine provides several hooks that allow fine-grained control over the conversation flow, message handling, and tool execution. Each hook returns a boolean value where `true` allows the operation to proceed and `false` prevents it.
+
+__In most cases, it's wise to throw and handle exception instead of just returning `false`, since returning `false` silently stops execution__
+
+You can override any engine level hook in your agent class. 
+
+You can find an example implementations for each hook below.
+
+#### beforeReinjectingInstructions
+
+The `beforeReinjectingInstructions` hook is called before the engine reinjects system instructions into the chat history. Use this to modify or validate the chat history before instructions are reinjected or even change the instructions completely.
+
+__As mentioned above, instructions are always injected at the beginning of the chat history, `$reinjectInstructionsPer` defined when to reinject the instructions again. By default it is set to `0` (disabled).__
+
+```php
+/**
+ * @param ChatHistoryInterface $chatHistory
+ * @return bool
+ */
+protected function beforeReinjectingInstructions($chatHistory)
+{
+    // Prevent reinjecting instructions for specific chat types
+    if ($chatHistory->count() > 1000) {
+        $this->instuctions = view("agents/new_instructions", ['user' => auth()->user()])->render();
+    }
+    return true;
+}
+```
+
+#### beforeSend & afterSend
+
+These hooks are called before and after a message is added to the chat history. Use them to modify, validate, or log messages.
+
+```php
+/**
+ * @param ChatHistoryInterface $history
+ * @param MessageInterface|null $message
+ * @return bool
+ */
+protected function beforeSend($history, $message)
+{
+    // Filter out sensitive information
+    if ($message && Checker::containsSensitiveData($message->getContent())) {
+        throw new \Exception("Message contains sensitive data");
+    }
+    return true;
+}
+
+protected function afterSend($history, $message)
+{
+    // Log successful messages
+    Log::info('Message sent', [
+        'session' => $history->getIdentifier(),
+        'content_length' => Tokenizer::count($message->getContent())
+    ]);
+    return true;
+}
+```
+
+#### beforeSaveHistory
+
+Triggered before the chat history is saved. Perfect for validation or modification of the history before persistence.
+
+```php
+protected function beforeSaveHistory($history)
+{
+    // Add metadata before saving
+    $updatedMeta = [
+        'saved_at' => now()->timestamp,
+        'message_count' => $history->count()
+        ...$history->getMetadata()
+    ]
+    $history->setMetadata($updatedMeta);
+    return true;
+}
+```
+
+#### beforeResponse / afterResponse
+
+These hooks are called before sending a message (message is already added to the chat history) to the LLM and after receiving its response. Use them for request/response manipulation or monitoring.
+
+```php
+/**
+ * @param ChatHistoryInterface $history
+ * @param MessageInterface|null $message
+ */
+protected function beforeResponse($history, $message)
+{
+    // Add context to the message
+    if ($message) {
+        Log::info('User message: ' . $message->getContent());
+    }
+    return true;
+}
+
+/**
+ * @param MessageInterface $message
+ */
+protected function afterResponse($message)
+{
+    // Process or validate the LLM response
+    if (is_array($message->getContent())) {
+        Log::info('Structured response received');
+    }
+    return true;
+}
+```
+
+
+
+#### beforeToolExecution / afterToolExecution
+
+These hooks are triggered before and after a tool is executed. Perfect for tool-specific validation, logging, or result modification.
+
+```php
+/**
+ * @param ToolInterface $tool
+ * @return bool
+ */
+protected function beforeToolExecution($tool)
+{
+    // Check tool permissions
+    if (!$this->hasToolPermission($tool->getName())) {
+        Log::warning("Unauthorized tool execution attempt: {$tool->getName()}");
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @param ToolInterface $tool
+ * @param mixed &$result
+ * @return bool
+ */
+protected function afterToolExecution($tool, &$result)
+{
+    // Modify or format tool results
+    if (is_array($result)) {
+        // Since tool result is reference (&$result), we can safely modify it
+        $result = array_map(fn($item) => trim($item), $result);
+    }
+    return true;
+}
+```
+
+
+#### beforeStructuredOutput
+
+This hook is called before processing structured output. Use it to modify or validate the response structure.
+
+```php
+protected function beforeStructuredOutput(array &$response)
+{
+    // Return false if response contains something unexpected
+    if (!$this->checkArrayContent($response)) {
+        return false; // After returning false, the method stops executing and 'respond' will return `null`
+    }
+
+    // Add additional data to output
+    $response['timestamp'] = now()->timestamp;
+    return true;
+}
+```
+
+
+### Using Laravel events with hooks
+
+LarAgent hooks can be integrated with Laravel's event system to provide more flexibility and better separation of concerns. This allows you to:
+- Decouple event handling logic from your agent class
+- Use event listeners and subscribers
+- Leverage Laravel's event broadcasting capabilities
+- Handle events asynchronously using queues
+
+__Consider checking Laravel [Events documentation](https://laravel.com/docs/11.x/events) before proceeding.__
+
+Here's how you can integrate Laravel events with LarAgent hooks.
+
+#### Basic Event Integration
+
+First, define your event classes:
+
+```php
+// app/Events/AgentMessageReceived.php
+class AgentMessageReceived
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function __construct(
+        public ChatHistoryInterface $history,
+        public MessageInterface $message
+    ) {}
+}
+```
+
+Then, implement the hook in your agent class:
+
+```php
+protected function afterSend($history, $message)
+{
+    // Dispatch Laravel event
+    AgentMessageReceived::dispatch($history, $message));
+    return true;
+}
+```
+
+#### Using Event Listeners
+
+Create dedicated listeners for your agent events:
+
+```php
+// app/Listeners/LogAgentMessage.php
+class LogAgentMessage
+{
+    public function handle(AgentMessageReceived $event)
+    {
+        Log::info('Agent message received', [
+            'content' => $event->message->getContent(),
+            'tokens' => Tokenizer::count($event->message->getContent()),
+            'history_id' => $event->history->getIdentifier()
+        ]);
+    }
+}
+```
+
+Register the event-listener mapping in your `EventServiceProvider`:
+
+```php
+// app/Providers/EventServiceProvider.php
+protected $listen = [
+    AgentMessageReceived::class => [
+        LogAgentMessage::class,
+        NotifyAdminAboutMessage::class,
+        // Add more listeners as needed
+    ],
+];
+```
+
+
 
 ## Commands
 
