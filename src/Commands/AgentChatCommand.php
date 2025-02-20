@@ -11,7 +11,6 @@ class AgentChatCommand extends Command
 
     protected $description = 'Start an interactive chat session with an agent';
 
-
     public function handle()
     {
         $agentName = $this->argument('agent');
