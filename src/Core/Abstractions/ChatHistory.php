@@ -106,6 +106,9 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 
     abstract public function writeToMemory(): void;
 
+    // @todo Add abstract method for saving and loading history keys
+    // @todo Make history keys management optional (enabled by default)
+
     // Token management methods
     public function setContextWindow(int $tokens): void
     {

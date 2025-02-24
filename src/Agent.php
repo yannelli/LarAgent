@@ -477,7 +477,6 @@ class Agent
         return $config;
     }
 
-    // @todo Highlight possibility of laravel events via documentation
     protected function registerEvents(): void
     {
         $instance = $this;
@@ -555,7 +554,6 @@ class Agent
         $this->registerEvents();
     }
 
-    // @todo Implement [#tool("description of tool")] attribute
 
     /**
      * Builds tools from methods annotated with #[Tool] attribute

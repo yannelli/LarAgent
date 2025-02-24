@@ -11,6 +11,8 @@ Jump to [Table of Contents](#table-of-contents)
 
 _Need to use LarAgent outside of Laravel? Check out this [Docs](https://github.com/MaestroError/LarAgent/blob/main/LARAGENT.md)._
 
+__If you prefer article to get started, check it out [Laravel AI Agent Development Made Easy](https://medium.com/towardsdev/laravel-ai-agent-development-made-easy-ac7ddd17a7d0)__
+
 ## Introduction
 
 LarAgent brings the power of AI agents to your Laravel projects with an elegant syntax. Create, extend, and manage AI agents with ease while maintaining Laravel's fluent API design patterns.
@@ -133,6 +135,7 @@ Here's what's coming next to make LarAgent even more powerful:
 
 ### Developer Experience 🛠️
 - **Artisan Commands for Rapid Development**
+  - `chat-history:clear AgentName` - Clear all chat histories for a specific agent
   - `make:agent:tool` - Generate tool classes with ready-to-use stubs
   - `make:agent:chat-history` - Scaffold custom chat history implementations
   - `make:llm-driver` - Create custom LLM driver integrations
@@ -159,34 +162,34 @@ Stay tuned! We're constantly working on making LarAgent the most versatile AI ag
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Getting Started](#getting-started)
+- [Introduction 📖](#introduction)
+- [Getting Started 🚀](#getting-started)
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Configuration](#configuration)
-- [Core Concepts](#core-concepts)
+- [Core Concepts ⚙️](#core-concepts)
   - [Agents](#agents)
-  - [Tools](#tools)
+  - [Tools (Function Calling)](#tools)
   - [Chat History](#chat-history)
   - [Structured Output](#structured-output)
   - [Usage without Laravel](#usage-in-and-outside-of-laravel)
-- [Events](#events)
+- [Events 🔥](#events)
   - [Agent](#agent)
   - [Engine](#engine)
   - [Using Laravel events with hooks](#using-laravel-events-with-hooks)
-- [Commands](#commands)
+- [Commands 💬](#commands)
   - [Creating an Agent](#creating-an-agent-1)
   - [Interactive Chat](#interactive-chat)
-- [Advanced Usage](#advanced-usage)
+- [Advanced Usage 🔍](#advanced-usage)
   - [AI Agents as Tools](#ai-agents-as-tools)
   - [Creating Custom Providers](#creating-custom-providers)
   - [Creating Custom Chat Histories](#creating-custom-chat-histories)
-- [Contributing](#contributing)
-- [Testing](#testing)
-- [Security](#security)
-- [Credits](#credits)
-- [License](#license)
-- [Roadmap](#roadmap)
+- [Contributing 🤝](#contributing)
+- [Testing 🧪](#testing)
+- [Security 🔒](#security)
+- [Credits 🙌](#credits)
+- [License 📜](#license)
+- [Roadmap 🛣️](#roadmap)
 
 ## Getting Started
 
@@ -1167,10 +1170,12 @@ Then, implement the hook in your agent class:
 protected function afterSend($history, $message)
 {
     // Dispatch Laravel event
-    AgentMessageReceived::dispatch($history, $message));
+    AgentMessageReceived::dispatch($history, $message);
     return true;
 }
 ```
+
+__In case you want to pass agent in event handler, please use `toDTO` method: `$this->toDTO()`__
 
 #### Using Event Listeners
 
@@ -1252,6 +1257,11 @@ You can create tools which calls another agent and bind the result to the agent 
 
 
 ### Creating Custom chat histories
+
+// @todo add example
+
+
+### Chaining Agents
 
 // @todo add example
 

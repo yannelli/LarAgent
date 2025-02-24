@@ -1,0 +1,68 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature! Please fill out this form as completely as possible.
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: Feature Summary
+      description: A brief explanation of the feature you want to add.
+      placeholder: Describe the feature in a few sentences...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Explain why this feature is useful and how it improves the project
+      placeholder: How would this feature benefit users? What problem does it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-implementation
+    attributes:
+      label: Proposed API / Implementation
+      description: How would this feature work?
+      placeholder: |
+        Describe the feature's interface and implementation details.
+        Code examples or pseudo-code are welcome!
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you tried another way to achieve this? Why does this feature add value?
+      placeholder: |
+        - What alternatives have you considered?
+        - Why is this approach better?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any links, references, or other details to support your request?
+      placeholder: Add any other context, screenshots, or examples about the feature request here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked for duplicate issues before submitting.
+          required: true
+        - label: I am willing to help implement this feature if needed.
+          required: false
