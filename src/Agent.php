@@ -54,7 +54,7 @@ class Agent
     // Driver configs
 
     /** @var string */
-    protected $model = 'gpt-4o-mini';
+    protected $model;
 
     /** @var int */
     protected $contextWindowSize;

@@ -59,7 +59,6 @@ enum Unit: string
 
 class WeatherAgent extends LarAgent\Agent
 {
-    protected $model = 'gpt-4o-mini';
 
     protected $provider = 'default';
 
@@ -124,7 +123,9 @@ class WeatherAgent extends LarAgent\Agent
 
 echo WeatherAgent::for('test_chat')->respond('What\'s the weather like in Boston and Los Angeles? I prefer fahrenheit');
 echo "\n---\n";
-// Using "celsus" instead of "celsius" to check correct pick of enum value
-echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York? I prefer celsus');
+// // Using "celsus" instead of "celsius" to check correct pick of enum value
+// echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York? I prefer celsus');
+// echo "\n---\n";
+// echo WeatherAgent::for('test_chat')->message('Where am I now?')->respond();
 echo "\n---\n";
-echo WeatherAgent::for('test_chat')->message('Where am I now?')->respond();
+echo WeatherAgent::for('test_chat')->model();
