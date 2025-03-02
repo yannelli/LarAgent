@@ -133,3 +133,19 @@ it('can handle image urls in response', function () {
             'image_url' => ['url' => 'http://example.com/image2.jpg'],
         ]);
 });
+
+it('can dynamically change model', function () {
+    $agent = new TestAgent('test_session');
+    
+    // Check default model
+    expect($agent->model())->toBe('gpt-4o-mini');
+    
+    // Change model dynamically
+    $agent->withModel('gpt-3.5-turbo');
+    
+    // Verify model was changed
+    expect($agent->model())->toBe('gpt-3.5-turbo');
+    
+    // Verify chainable method returns agent instance
+    expect($agent->withModel('gpt-4'))->toBeInstanceOf(Agent::class);
+});

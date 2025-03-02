@@ -156,6 +156,8 @@ class Agent
             $this->message($message);
         }
 
+        $this->setupBeforeRespond();
+
         $this->onConversationStart();
 
         $message = Message::user($this->prompt($this->message));
@@ -191,6 +193,16 @@ class Agent
     public function instructions()
     {
         return $this->instructions;
+    }
+
+    /**
+     * Get the model for the agent
+     *
+     * @return string The agent's model
+     */
+    public function model()
+    {
+        return $this->model;
     }
 
     /**
@@ -353,6 +365,13 @@ class Agent
         return $this;
     }
 
+    public function withModel(string $model): static
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
     /**
      * Convert Agent to DTO
      * // @todo mention DTO in the documentation as state for events
@@ -360,7 +379,7 @@ class Agent
     public function toDTO(): AgentDTO
     {
         $driverConfigs = array_filter([
-            'model' => $this->model,
+            'model' => $this->model(),
             'contextWindowSize' => $this->contextWindowSize ?? null,
             'maxCompletionTokens' => $this->maxCompletionTokens ?? null,
             'temperature' => $this->temperature ?? null,
@@ -399,7 +418,7 @@ class Agent
         return sprintf(
             '%s_%s_%s',
             class_basename(static::class),
-            $this->model,
+            $this->model(),
             $id
         );
     }
@@ -462,7 +481,7 @@ class Agent
     protected function buildConfigsForLaragent()
     {
         $config = [
-            'model' => $this->model,
+            'model' => $this->model(),
         ];
         if (isset($this->maxCompletionTokens)) {
             $config['max_completion_tokens'] = $this->maxCompletionTokens;
@@ -550,6 +569,10 @@ class Agent
         $this->setupProviderData();
         $chatHistory = $this->createChatHistory($this->getChatSessionId());
         $this->setChatHistory($chatHistory);
+    }
+
+    protected function setupBeforeRespond(): void
+    {
         $this->setupAgent();
         $this->registerEvents();
     }
