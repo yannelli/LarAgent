@@ -321,7 +321,7 @@ protected $temperature;
 protected $message;
 ```
 
-The agent also provides two core methods that you can override:
+The agent also provides three core methods that you can override:
 
 ```php
 /**
@@ -342,6 +342,15 @@ public function instructions()
 public function prompt(string $message)
 {
     return $message;
+}
+
+/**
+ * Decide which model to use dynamically with custom logic
+ * Or use property $model to statically set the model
+ */
+public function model()
+{
+    return $this->model;
 }
 ```
 
@@ -409,6 +418,12 @@ public function message(string $message);
  * @param array $imageUrls Array of image URLs
  */
 public function withImages(array $imageUrls);
+
+/**
+ * Decide model dynamically in your controller
+ * @param string $model Model identifier (e.g., 'gpt-4o', 'gpt-3.5-turbo')
+ */
+public function withModel(string $model);
 
 /**
  * Clear the chat history 
