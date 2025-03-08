@@ -8,6 +8,7 @@ use LarAgent\Core\Contracts\ChatHistory as ChatHistoryInterface;
 class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
 {
     protected string $folder = '';
+    protected string $keysFile = 'JsonChatHistory-keys.json';
 
     public function __construct(string $name, array $options = [])
     {
@@ -41,6 +42,31 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
         $file = $this->getFullPath();
         // Create json file
         file_put_contents($file, json_encode($this->toArrayForStorage()));
+    }
+
+    public function saveKeyToMemory(): void
+    {
+        $this->createFolderIfNotExists();
+        $keysPath = $this->folder.'/'.$this->keysFile;
+        $keys = $this->loadKeysFromMemory();
+
+        $key = $this->getIdentifier();
+        if (!in_array($key, $keys)) {
+            $keys[] = $key;
+            file_put_contents($keysPath, json_encode($keys));
+        }
+    }
+
+    public function loadKeysFromMemory(): array
+    {
+        $keysPath = $this->folder.'/'.$this->keysFile;
+
+        if (!file_exists($keysPath)) {
+            return [];
+        }
+
+        $content = file_get_contents($keysPath);
+        return json_decode($content, true) ?? [];
     }
 
     protected function createFolderIfNotExists(): void

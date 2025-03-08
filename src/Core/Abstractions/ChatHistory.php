@@ -19,12 +19,20 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 
     protected bool $storeMeta; // Store metadata with messages, when using toArray method for storage
 
+    protected bool $saveChatKeys; // Save chat keys to memory
+
     public function __construct(string $name, array $options = [])
     {
         $this->name = $name;
         $this->readFromMemory();
+        
         $this->contextWindow = $options['context_window'] ?? 60000;
         $this->storeMeta = $options['store_meta'] ?? false;
+        $this->saveChatKeys = $options['save_chat_keys'] ?? true;
+
+        if ($this->saveChatKeys) {
+            $this->saveKeyToMemory();
+        }
     }
 
     public function addMessage(MessageInterface $message): void
@@ -106,8 +114,12 @@ abstract class ChatHistory implements ArrayAccess, ChatHistoryInterface
 
     abstract public function writeToMemory(): void;
 
-    // @todo Add abstract method for saving and loading history keys
-    // @todo Make history keys management optional (enabled by default)
+    // Abstract methods for keys management
+    abstract public function saveKeyToMemory(): void;
+
+    abstract public function loadKeysFromMemory(): array;
+
+
 
     // Token management methods
     public function setContextWindow(int $tokens): void

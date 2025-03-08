@@ -180,6 +180,7 @@ Stay tuned! We're constantly working on making LarAgent the most versatile AI ag
 - [💬 Commands](#commands)
   - [Creating an Agent](#creating-an-agent-1)
   - [Interactive Chat](#interactive-chat)
+  - [Clear Chat History](#clear-chat-history)
 - [🔍 Advanced Usage](#advanced-usage)
   - [AI Agents as Tools](#ai-agents-as-tools)
   - [Creating Custom Providers](#creating-custom-providers)
@@ -255,6 +256,8 @@ You can configure the package by editing the `config/laragent.php` file. Here is
         'parallel_tool_calls' => true,
         // Store metadata with messages
         'store_meta' => true,
+        // Save chat keys to memory via chatHistory
+        'save_chat_keys' => true,
     ],
 ```
 
@@ -485,6 +488,10 @@ public function currentMessage(): ?string;
  * Returns the last message
  */
 public function lastMessage(): ?MessageInterface;
+/**
+ * Get all chat keys associated with this agent class
+ */
+public function getChatKeys(): array;
 ```
 
 ### Tools
@@ -676,6 +683,14 @@ After the context window is exceeded, the oldest messages are removed until the 
 protected $storeMeta;
 ```
 Some LLM drivers such as OpenAI provide additional data with the response, such as token usage, completion time, etc. By default it is set to `false` (disabled).
+
+
+**saveChatKeys**
+```php
+/** @var bool - Store chat keys in memory */
+protected $saveChatKeys;
+```
+By default it is true, since it is required for [chat history bunch clearing](#clear-chat-history) command to work.
 
 #### Creating Custom Chat History
 
@@ -1247,7 +1262,7 @@ protected $listen = [
 You can quickly create a new agent using the `make:agent` command:
 
 ```bash
-php artisan make:agent WeatherAgent
+php artisan make:agent AgentName
 ```
 
 This will create a new agent class in your `app/AiAgents` directory with the basic structure and methods needed to get started.
@@ -1258,10 +1273,10 @@ You can start an interactive chat session with any of your agents using the `age
 
 ```bash
 # Start a chat with default history name
-php artisan agent:chat WeatherAgent
+php artisan agent:chat AgentName
 
 # Start a chat with a specific history name
-php artisan agent:chat WeatherAgent --history=weather_chat_1
+php artisan agent:chat AgentName --history=weather_chat_1
 ```
 
 The chat session allows you to:
@@ -1270,6 +1285,15 @@ The chat session allows you to:
 - Use any tools configured for the agent
 - Type 'exit' to end the chat session
 
+### Clear Chat History
+
+You can clear all chat history for a specific agent using the `agent:chat:clear` command:
+
+```bash
+php artisan agent:chat:clear AgentName
+```
+
+This command will remove all stored conversations for the specified agent, regarding of the chat history storage method being used (json, cache, file, etc.).
 
 ## Advanced Usage
 

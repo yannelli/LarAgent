@@ -66,6 +66,16 @@ class Agent
      */
     protected $storeMeta;
 
+    /** @var bool */
+    protected $saveChatKeys;
+
+    /**
+     * Chat key associated with this agent
+     *
+     * @var string
+     */
+    protected $chatKey;
+
     /** @var int */
     protected $maxCompletionTokens;
 
@@ -239,6 +249,7 @@ class Agent
         return new $historyClass($sessionId, [
             'context_window' => $this->contextWindowSize,
             'store_meta' => $this->storeMeta,
+            'save_chat_keys' => $this->saveChatKeys,
         ]);
     }
 
@@ -330,6 +341,26 @@ class Agent
         return $this;
     }
 
+    public function getChatKey(): string
+    {
+        return $this->chatKey;
+    }
+
+    /**
+     * Get all chat keys associated with this agent class
+     * 
+     * @return array Array of chat keys filtered by agent class name
+     */
+    public function getChatKeys(): array
+    {
+        $keys = $this->chatHistory->loadKeysFromMemory();
+        $agentClass = class_basename(static::class);
+
+        return array_filter($keys, function ($key) use ($agentClass) {
+            return str_starts_with($key, $agentClass . '_');
+        });
+    }
+
     public function withTool(ToolInterface $tool): static
     {
         $this->tools[] = $tool;
@@ -368,6 +399,12 @@ class Agent
     public function withModel(string $model): static
     {
         $this->model = $model;
+
+        // Update chat session ID with new model
+        $this->setChatSessionId($this->getChatKey());
+
+        // Create new chat history with updated session ID
+        $this->setupChatHistory();
 
         return $this;
     }
@@ -408,18 +445,19 @@ class Agent
 
     protected function setChatSessionId(string $id): static
     {
-        $this->chatSessionId = $this->buildSessionId($id);
+        $this->chatKey = $id;
+        $this->chatSessionId = $this->buildSessionId();
 
         return $this;
     }
 
-    protected function buildSessionId(string $id)
+    protected function buildSessionId()
     {
         return sprintf(
             '%s_%s_%s',
             class_basename(static::class),
             $this->model(),
-            $id
+            $this->getChatKey()
         );
     }
 
@@ -441,6 +479,9 @@ class Agent
         }
         if (! isset($this->storeMeta) && isset($providerData['store_meta'])) {
             $this->storeMeta = $providerData['store_meta'];
+        }
+        if (! isset($this->saveChatKeys) && isset($providerData['save_chat_keys'])) {
+            $this->saveChatKeys = $providerData['save_chat_keys'];
         }
         if (! isset($this->temperature) && isset($providerData['default_temperature'])) {
             $this->temperature = $providerData['default_temperature'];
@@ -567,14 +608,19 @@ class Agent
     protected function setup(): void
     {
         $this->setupProviderData();
-        $chatHistory = $this->createChatHistory($this->getChatSessionId());
-        $this->setChatHistory($chatHistory);
+        $this->setupChatHistory();
     }
 
     protected function setupBeforeRespond(): void
     {
         $this->setupAgent();
         $this->registerEvents();
+    }
+
+    protected function setupChatHistory(): void
+    {
+        $chatHistory = $this->createChatHistory($this->getChatSessionId());
+        $this->setChatHistory($chatHistory);
     }
 
 
