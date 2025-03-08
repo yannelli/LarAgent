@@ -101,3 +101,27 @@ it('Takes in account the reservedForCompletion property', function () {
 
     expect($chatHistory->exceedsContextWindow(4500))->toBeTrue();
 });
+
+it('respects save_chat_keys option when saving to memory', function () {
+    // Test with save_chat_keys enabled (default)
+    $chatHistory = new InMemoryChatHistory('test_keys_enabled');
+    $message = new UserMessage('Message with keys enabled');
+    $chatHistory->addMessage($message);
+    $chatHistory->writeToMemory();
+
+    // Clear and reload to verify keys were saved
+    $chatHistory->clear();
+    expect($chatHistory->loadKeysFromMemory())->not->toBeEmpty();
+
+    // Test with save_chat_keys disabled
+    $chatHistory = new InMemoryChatHistory('test_keys_disabled', [
+        'save_chat_keys' => false
+    ]);
+    $message = new UserMessage('Message with keys disabled');
+    $chatHistory->addMessage($message);
+    $chatHistory->writeToMemory();
+
+    // Clear and reload to verify keys were not saved
+    $chatHistory->clear();
+    expect($chatHistory->loadKeysFromMemory())->toBeEmpty();
+});

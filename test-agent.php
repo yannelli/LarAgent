@@ -67,6 +67,9 @@ class WeatherAgent extends LarAgent\Agent
         // WeatherTool::class
     ];
 
+    // To not saves chat keys to memory, by default = true
+    protected $saveChatKeys = false;
+
     protected $history = 'in_memory';
 
     public function instructions()
@@ -127,5 +130,5 @@ echo "\n---\n";
 // echo WeatherAgent::for('test_chat')->respond('Thanks for the info. What about New York? I prefer celsus');
 // echo "\n---\n";
 // echo WeatherAgent::for('test_chat')->message('Where am I now?')->respond();
-echo "\n---\n";
-echo WeatherAgent::for('test_chat')->model();
+// echo "\n---\n";
+// echo WeatherAgent::for('test_chat')->model();

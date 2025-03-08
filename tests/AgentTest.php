@@ -149,3 +149,34 @@ it('can dynamically change model', function () {
     // Verify chainable method returns agent instance
     expect($agent->withModel('gpt-4'))->toBeInstanceOf(Agent::class);
 });
+
+it('can get chat keys filtered by agent class', function () {
+    // Create a few chat sessions with different agents and models
+    $agent1 = TestAgent::for('user1');
+    $agent1->withModel('gpt-4')->respond('First message from user1');
+
+    // Create a different agent class to ensure filtering works
+    class AnotherAgent extends TestAgent {}
+    $otherAgent = AnotherAgent::for('user3');
+    $otherAgent->respond('Message from other agent');
+
+    // Get chat keys for TestAgent
+    $testAgentKeys = $agent1->getChatKeys();
+
+    // Should contain TestAgent keys but not AnotherAgent keys
+    expect($testAgentKeys)
+        ->toBeArray()
+        ->and($testAgentKeys)->toHaveCount(1)
+        ->and($testAgentKeys)->toContain('TestAgent_gpt-4_user1')
+        ->and($testAgentKeys)->not->toContain('AnotherAgent_gpt-4o-mini_user3');
+
+    // Get chat keys for AnotherAgent
+    $otherAgentKeys = $otherAgent->getChatKeys();
+
+    // Should only contain AnotherAgent keys
+    expect($otherAgentKeys)
+        ->toBeArray()
+        ->and($otherAgentKeys)->toHaveCount(1)
+        ->and($otherAgentKeys)->toContain('AnotherAgent_gpt-4o-mini_user3')
+        ->and($otherAgentKeys)->not->toContain('TestAgent_gpt-4_user1');
+});
