@@ -32,7 +32,7 @@ class AgentChatClearCommand extends Command
             // Clear each chat history
             foreach ($chatKeys as $key) {
                 // Create new chat history with save_chat_keys disabled
-                $agent->createChatHistory($key);
+                $agent->setChatHistory($agent->createChatHistory($key));
                 // Clear messages
                 $agent->clear();
             }
