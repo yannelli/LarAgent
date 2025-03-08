@@ -491,7 +491,7 @@ public function lastMessage(): ?MessageInterface;
 /**
  * Get all chat keys associated with this agent class
  */
-public function getChatKeys(): array
+public function getChatKeys(): array;
 ```
 
 ### Tools

@@ -72,13 +72,17 @@ test('it can clear chat history for existing agent', function () {
     $agent->message('Hello')->respond();
     
     // Verify chat history exists
-    expect($agent->getChatKeys())->not->toBeEmpty();
+    $chatKeys = $agent->getChatKeys();
+    expect($chatKeys)->toHaveCount(1);
+    expect($chatKeys)->toContain('TestAgent_gpt-4-mini_test_key');
     
     // Clear the history
     $this->artisan('agent:chat:clear', ['agent' => 'TestAgent'])
         ->assertSuccessful()
         ->expectsOutput('Successfully cleared chat history for agent: TestAgent');
     
-    // Verify chat history is cleared
-    expect(\App\AiAgents\TestAgent::for('test_key')->chatHistory()->getMessages())->toBeEmpty();
+    // Verify all chat histories are cleared but keys remain
+    $agent = \App\AiAgents\TestAgent::for('test_key');
+    expect($agent->chatHistory()->getMessages())->toBeEmpty();
+    expect($agent->getChatKeys())->toHaveCount(1);
 });
