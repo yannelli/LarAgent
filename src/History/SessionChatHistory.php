@@ -27,11 +27,7 @@ class SessionChatHistory extends ChatHistory implements ChatHistoryInterface
 
     public function saveKeyToMemory(): void
     {
-        $keys = Session::get($this->keysKey, []);
-        if (!is_array($keys)) {
-            $keys = [];
-        }
-
+        $keys = $this->loadKeysFromMemory();
         $key = $this->getIdentifier();
         if (!in_array($key, $keys)) {
             $keys[] = $key;

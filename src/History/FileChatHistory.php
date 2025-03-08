@@ -64,12 +64,7 @@ class FileChatHistory extends ChatHistory implements ChatHistoryInterface
         try {
             $this->createFolderIfNotExists();
             $keysPath = $this->folder.'/'.$this->keysFile;
-            $keys = [];
-
-            if (Storage::disk($this->disk)->exists($keysPath)) {
-                $content = Storage::disk($this->disk)->get($keysPath);
-                $keys = json_decode($content, true) ?? [];
-            }
+            $keys = $this->loadKeysFromMemory();
 
             $key = $this->getIdentifier();
             if (!in_array($key, $keys)) {

@@ -48,12 +48,7 @@ class JsonChatHistory extends ChatHistory implements ChatHistoryInterface
     {
         $this->createFolderIfNotExists();
         $keysPath = $this->folder.'/'.$this->keysFile;
-        $keys = [];
-
-        if (file_exists($keysPath)) {
-            $content = file_get_contents($keysPath);
-            $keys = json_decode($content, true) ?? [];
-        }
+        $keys = $this->loadKeysFromMemory();
 
         $key = $this->getIdentifier();
         if (!in_array($key, $keys)) {

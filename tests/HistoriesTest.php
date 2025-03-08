@@ -81,7 +81,7 @@ it('can save and load keys in session chat history', function () {
 });
 
 it('can save and load keys in json chat history', function () {
-    $firstHistory = new JsonChatHistory('test_json_1', ['folder' => __DIR__.'/json_storage']);
+    $firstHistory = new JsonChatHistory('test_json', ['folder' => __DIR__.'/json_storage']);
     $secondHistory = new JsonChatHistory('test_json_2', ['folder' => __DIR__.'/json_storage']);
 
     // Save keys
@@ -91,7 +91,7 @@ it('can save and load keys in json chat history', function () {
     // Load and verify keys
     $keys = $firstHistory->loadKeysFromMemory();
     expect($keys)->toBeArray()
-        ->toContain('test_json_1')
+        ->toContain('test_json')
         ->toContain('test_json_2')
         ->toHaveCount(2);
 

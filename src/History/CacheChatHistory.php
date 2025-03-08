@@ -35,11 +35,7 @@ class CacheChatHistory extends ChatHistory implements ChatHistoryInterface
 
     public function saveKeyToMemory(): void
     {
-        $keys = $this->store ? Cache::store($this->store)->get($this->keysKey, []) : Cache::get($this->keysKey, []);
-        if (!is_array($keys)) {
-            $keys = [];
-        }
-
+        $keys = $this->loadKeysFromMemory();
         $key = $this->getIdentifier();
         if (!in_array($key, $keys)) {
             $keys[] = $key;

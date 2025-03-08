@@ -255,6 +255,8 @@ You can configure the package by editing the `config/laragent.php` file. Here is
         'parallel_tool_calls' => true,
         // Store metadata with messages
         'store_meta' => true,
+        // Save chat keys to memory via chatHistory
+        'save_chat_keys' => true,
     ],
 ```
 

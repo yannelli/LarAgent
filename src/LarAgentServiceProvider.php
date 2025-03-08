@@ -4,6 +4,7 @@ namespace LarAgent;
 
 use LarAgent\Commands\AgentChatCommand;
 use LarAgent\Commands\MakeAgentCommand;
+use LarAgent\Commands\AgentChatClearCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -22,6 +23,7 @@ class LarAgentServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 MakeAgentCommand::class,
                 AgentChatCommand::class,
+                AgentChatClearCommand::class,
             ]);
     }
 }
