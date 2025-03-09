@@ -1392,7 +1392,7 @@ git push origin feature/your-feature-name
 - Join discussions in existing issues (@todo add discord channel invite link)
 - Reach out to maintainers for guidance
 
-We aim to review all pull requests within a 2 weeks. Thank you for contributing to LarAgent!
+We aim to review all pull requests within 2 weeks. Thank you for contributing to LarAgent!
 
 ## Testing
 
