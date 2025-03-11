@@ -172,6 +172,7 @@ Stay tuned! We're constantly working on making LarAgent the most versatile AI ag
   - [Tools (Function Calling)](#tools)
   - [Chat History](#chat-history)
   - [Structured Output](#structured-output)
+  - [LLM Drivers](#llm-drivers)
   - [Usage without Laravel](#usage-in-and-outside-of-laravel)
 - [🔥 Events](#events)
   - [Agent](#agent)
@@ -866,6 +867,83 @@ $schema = $agent->structuredOutput();
 if ($agent->structuredOutput()) {
     // Handle structured response
 }
+```
+
+### LLM Drivers
+
+LarAgent provides a `LlmDriver` interface that allows you to implement custom LLM drivers for different providers. We have several built-in drivers that implement the interface and provide a simple way to use the API.
+
+#### Using drivers
+
+You can use the drivers by setting them in the configuration file:
+
+```php
+'providers' => [
+    'default' => [
+        'name' => 'openai',
+        'api_key' => env('OPENAI_API_KEY'),
+        // ...
+        'driver' => \LarAgent\Drivers\OpenAi\OpenAiDriver::class,
+        // ...
+    ],
+],
+```
+
+Or by setting them per Agent in your agent class using `$driver` property:
+
+```php
+// ...
+protected $driver = \LarAgent\Drivers\OpenAi\OpenAiDriver::class;
+// ...
+```
+
+#### Available drivers
+
+##### OpenAiDriver
+Default driver, which allows you easy start just by adding OPENAI_API_KEY in your `.env` file
+
+##### OpenAiCompatible
+Driver that can be used with any OpenAI-compatible provider. For example configuration with **ollama** provider would look like:
+```php
+// File: config/laragent.php
+// ...
+'providers' => [
+
+    'ollama' => [
+        'name' => 'ollama-local',
+        'driver' => \LarAgent\Drivers\OpenAi\OpenAiCompatible::class,
+        'api_key' => '-',
+        'api_url' => "http://localhost:11434/v1",
+        'default_context_window' => 50000,
+        'default_max_completion_tokens' => 100,
+        'default_temperature' => 1,
+    ],
+],
+```
+Or any other LLM API which uses the same standards as OpenAI, such as **OpenRouter**:
+```php
+// File: config/laragent.php
+// ...
+'providers' => [
+
+    'openrouter' => [
+        'name' => 'some-label', // Name is only for internal use like a label, you can use any name
+        'driver' => \LarAgent\Drivers\OpenAi\OpenAiCompatible::class,
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'api_url' => "https://api.openrouter.ai/api/v1",
+        'default_context_window' => 50000,
+        'default_max_completion_tokens' => 100,
+        'default_temperature' => 1,
+    ],
+],
+```
+
+And then, set the `$provider` property in your agent class:
+
+```php
+// ...
+protected $provider = 'openrouter';
+// ...
 ```
 
 ### Usage in and outside of Laravel

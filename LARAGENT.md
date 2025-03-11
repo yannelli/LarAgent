@@ -78,7 +78,7 @@ Enforce structured responses using JSON schemas:
 
 ```php
 use LarAgent\Message;
-use LarAgent\Drivers\OpenAi\OpenAiDriver;
+use LarAgent\Drivers\OpenAi\OpenAiCompatible;
 use LarAgent\History\JsonChatHistory;
 use LarAgent\LarAgent;
 
@@ -98,7 +98,8 @@ $schema = [
 $name = 'unique-chat-key';
 $chatHistory = new JsonChatHistory($name, ['folder' => __DIR__.'/json_History']);
 
-$driver = new OpenAiDriver(['api_key' => 'your-api-key', 'api_url' => 'https://api.openai.com/v1']);
+// OpenAiCompatible driver is universal for any provider which adheres to OpenAI API standards
+$driver = new OpenAiCompatible(['api_key' => 'your-api-key', 'api_url' => 'https://api.openai.com/v1']);
 
 // Setup LarAgent
 $agent = LarAgent::setup($driver, $chatHistory, [
